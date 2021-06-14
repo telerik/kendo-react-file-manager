@@ -6,15 +6,14 @@ export const FolderTree = (props: any) => {
     }
 
     return (
-        <div>
-            <TreeView
-                className="k-filemanager-treeview"
-                data={props.data}
-                expandIcons={true}
-                onExpandChange={handleExpandChange}
-                // Add for test purposes
-                // animate={false}
-            /> 
-        </div>
+        <TreeView
+            className="k-filemanager-treeview"
+            data={props.data}
+            textField="name"
+            expandIcons={true}
+            onExpandChange={handleExpandChange}
+            // Add for test purposes
+            // animate={false}
+        /> 
     )
 }

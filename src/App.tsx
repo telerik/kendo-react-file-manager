@@ -5,6 +5,7 @@ import { FolderTree } from './components/FolderTree';
 import { FolderStructure } from './components/FolderStructure';
 import { initialData } from './data/data';
 import { FileInformation } from './components/FileInformation';
+import { Breadcrumb } from './components/Breadcrumb';
 
 const splitterPanes = [
   {
@@ -20,42 +21,60 @@ const splitterPanes = [
   },
 ];
 
-const App = () => {
-  const [treeData, setTreeData] = React.useState(initialData);
-  const [gridData, setGridData] = React.useState(treeData);
-  const [fileData, setFileData] = React.useState(gridData);
+export interface DataModel {
+  name: string,
+  size: number,
+  dateCreated: Date,
+  dateModified: Date | null,
+  items?: DataModel[],
+  length?: number
+}
 
+export interface TreeDataModel {
+  text: string,
+  expanded?: boolean,
+  items?: DataModel[]
+}
+
+const convertToTreeData = (data: DataModel[]) => {
+
+  return data.map((dataItem) => {
+    return {
+      text: dataItem.name,
+      items: convertToTreeData(dataItem.items || [])
+    }
+  })
+}
+
+const App = () => {
+  const [treeData, setTreeData] = React.useState<DataModel[]>(initialData);
   const [panes, setPanes] = React.useState(splitterPanes);
 
+  // const mappedTreeViewData = convertToTreeData(treeData);
 
   const handleChange = (event: any) => {
     setPanes(event.newState);
   };
 
-  console.log(treeData)
   return (
-     <div className="k-widget k-filemanager">
+     <div className="k-widget k-filemanager k-filemanager-resizable">
         <div className="k-filemanager-header">
-          <FileManagerToolbar data={gridData} />
+          <FileManagerToolbar data={treeData} />
         </div>
 
-      <div>
+      <div className="k-filemanager-content-container">
         <Splitter 
           panes={panes} 
           onChange={handleChange} 
         >
-          <div>
-            <FolderTree data={treeData} />
+          <FolderTree data={treeData} />
+
+          <div className="k-filemanager-content">
+            <Breadcrumb data={treeData}/>
+            <FolderStructure data={treeData} />
           </div>
 
-          <div>
-            <h4>** Breadcrumb component **</h4>
-            <FolderStructure data={gridData} />
-          </div>
-
-          <div >
-            <FileInformation data={fileData} />
-          </div>
+          <FileInformation data={treeData} />
         </Splitter>
       </div>
     </div>
@@ -63,4 +82,3 @@ const App = () => {
 }
 
 export default App;
-
