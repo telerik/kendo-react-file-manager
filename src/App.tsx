@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { FileManagerToolbar } from './components/FileManagerToolbar';
 import { Splitter } from '@progress/kendo-react-layout';
-import { FolderTree } from './components/FolderTree';
+
+import { FileManagerToolbar } from './components/FileManagerToolbar';
 import { FolderStructure } from './components/FolderStructure';
-import { initialData } from './data/data';
 import { FileInformation } from './components/FileInformation';
+import { FolderTree } from './components/FolderTree';
 import { Breadcrumb } from './components/Breadcrumb';
+
+import { initialData } from './data/data';
+import { DataModel, GridDataModel } from './interfaces/FileManagerModels';
+import { convertToTreeData, convertToGridData } from './helpers/helperMethods';
+import { useInternationalization } from '@progress/kendo-react-intl';
 
 const splitterPanes = [
   {
@@ -21,60 +26,78 @@ const splitterPanes = [
   },
 ];
 
-export interface DataModel {
-  name: string,
-  size: number,
-  dateCreated: Date,
-  dateModified: Date | null,
-  items?: DataModel[],
-  length?: number
-}
-
-export interface TreeDataModel {
-  text: string,
-  expanded?: boolean,
-  items?: DataModel[]
-}
-
-const convertToTreeData = (data: DataModel[]) => {
-
-  return data.map((dataItem) => {
-    return {
-      text: dataItem.name,
-      items: convertToTreeData(dataItem.items || [])
-    }
-  })
-}
-
 const App = () => {
-  const [treeData, setTreeData] = React.useState<DataModel[]>(initialData);
+  const [data, setData] = React.useState<DataModel[]>(initialData);
   const [panes, setPanes] = React.useState(splitterPanes);
+  const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(null);
+  const intl = useInternationalization();
 
-  // const mappedTreeViewData = convertToTreeData(treeData);
+  const treeData = React.useMemo(
+    () => convertToTreeData(data),
+    [data]
+  );
+  
+  const updateGridData = React.useCallback(
+    (curItem?: DataModel) => {
+      const newGridData = curItem && gridData ? convertToGridData(gridData, intl, curItem) : convertToGridData(data, intl);
+      // console.log('new data', newGridData)
+      if (newGridData) {
+        setGridData(newGridData);
+      }
+    },
+    [data, gridData, intl]
+  );
+  
+  const expandItem = event => {
+    if (event.item.items.length) {
+      const itemIndex = data.findIndex(item => item.name === event.item.name);
+      const newData = data.slice();
 
-  const handleChange = (event: any) => {
-    setPanes(event.newState);
+      event.item.expanded = true;
+
+      if (newData[itemIndex]) {
+        newData[itemIndex].expanded = true;
+        setData(newData);
+      }
+    }
   };
 
+  const handleItemClick = event => {
+    if (event) {
+      // expandItem(event);
+      // updateGridData(event.item);
+    }
+  };
+
+  const handleSplitterChange = (event) => {
+    if (event) {
+      setPanes(event.newState);
+    }
+  };
+  
+  console.log('tree data', treeData)
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
         <div className="k-filemanager-header">
-          <FileManagerToolbar data={treeData} />
+          <FileManagerToolbar data={data} />
         </div>
 
       <div className="k-filemanager-content-container">
         <Splitter 
           panes={panes} 
-          onChange={handleChange} 
+          onChange={handleSplitterChange} 
         >
-          <FolderTree data={treeData} />
+          <FolderTree 
+            data={data}
+            onItemClick={handleItemClick}
+            />
 
           <div className="k-filemanager-content">
-            <Breadcrumb data={treeData}/>
-            <FolderStructure data={treeData} />
+            <Breadcrumb data={data}/>
+            <FolderStructure data={gridData} />
           </div>
 
-          <FileInformation data={treeData} />
+          <FileInformation data={data} />
         </Splitter>
       </div>
     </div>

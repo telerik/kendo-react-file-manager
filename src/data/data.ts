@@ -1,9 +1,15 @@
-import { DataModel } from "../App";
+import { DataModel } from "../interfaces/FileManagerModels";
 
 export const initialData: DataModel[] = [
   {
-    name: "Tom",
+    name: "Pictures.jpg",
     size: 0,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+    items: []
+  },{
+    name: "Documents",
+    size: 10,
     dateCreated: new Date(),
     dateModified: new Date(),
     items: [
@@ -14,13 +20,19 @@ export const initialData: DataModel[] = [
           dateModified: null
         },
         {
-          name: "Image2.jpg",
+          name: "shared",
           size: 20,
           dateCreated: new Date(),
           dateModified: null,
           items: [
             {
-              name: "Nested",
+              name: "wave.jpg",
+              size: 20,
+              dateCreated: new Date(),
+              dateModified: null
+            },
+            {
+              name: "wave",
               size: 20,
               dateCreated: new Date(),
               dateModified: null
@@ -29,7 +41,13 @@ export const initialData: DataModel[] = [
         }
     ]      
   }, {
-    name: "Jerry",
+    name: "Pictures",
+    size: 0,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+    items: []
+  }, {
+    name: "Music",
     size: 0,
     dateCreated: new Date(),
     dateModified: new Date(),

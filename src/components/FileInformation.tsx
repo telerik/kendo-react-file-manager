@@ -10,7 +10,7 @@ export const FileInformation = (props: any) => {
 
 const NoDataRendering = () => {
     return (
-        <div className="k-filemanager-preview" style={{ width: '234px' }}>
+        <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
             <div className="k-file-info">
                 <span className="k-file-preview"><span className="k-file-icon k-icon k-i-none"></span></span>
                 <span className="k-file-name k-no-file-selected">No File Selected</span>
@@ -21,7 +21,7 @@ const NoDataRendering = () => {
 
 const FileSelectionRendering = data => {
     return (
-        <div className="k-filemanager-preview">
+        <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
             <div className="k-file-info">
                 <span className="k-file-preview">
                     <span className="k-file-icon k-icon k-i-file-image"></span>
@@ -48,10 +48,12 @@ const FileSelectionRendering = data => {
 
 const MultipleSelectionRendering = data => {
     return (
-        <div className="k-file-info">
-            <span className="k-file-preview">
-                <span className="k-file-icon k-icon k-i-file"></span></span>
-            <span className="k-file-name k-multiple-files-selected">{data.length} items</span>
+        <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
+            <div className="k-file-info">
+                <span className="k-file-preview" style={{ width: '100%', border: 0 }}>
+                    <span className="k-file-icon k-icon k-i-file"></span></span>
+                <span className="k-file-name k-multiple-files-selected">{data.length} items</span>
+            </div>
         </div>
     );
 }
