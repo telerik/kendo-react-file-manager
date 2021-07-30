@@ -17,16 +17,19 @@ export const convertToTreeData = (data: DataModel[]) => {
 }
 
 export const convertToGridData = (data, intl, selectedItem?: DataModel) => {
+  console.log('inside convert grid data', data, selectedItem )
     const newGridData = [] as GridDataModel[];
 
     const index: number = selectedItem ? data.findIndex(item => item.name === selectedItem.name) : 0;
     const hasItems: boolean = !!selectedItem?.items?.length;
 
-    let curData = data;
+    let curData;
 
 
     if (index >= 0) {
       curData = data[index].items ? data[index].items : null;
+      console.log('dadada', data[index])
+      console.log('cur data', curData)
     }
 
     if (curData && hasItems) {
@@ -36,8 +39,7 @@ export const convertToGridData = (data, intl, selectedItem?: DataModel) => {
         
         newGridData.push({
           name: item.name,
-          dateCreated: intl.DateTimeFormat(item.dateCreated, 
-            { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',minute: '2-digit', second: '2-digit' }),
+          dateCreated: item.dateCreated,
           size: item.size,
           icon: 'k-i-file'
         })

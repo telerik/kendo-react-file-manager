@@ -29,7 +29,7 @@ const splitterPanes = [
 const App = () => {
   const [data, setData] = React.useState<DataModel[]>(initialData);
   const [panes, setPanes] = React.useState(splitterPanes);
-  const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(null);
+  const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
   const intl = useInternationalization();
 
   const treeData = React.useMemo(
@@ -64,8 +64,8 @@ const App = () => {
 
   const handleItemClick = event => {
     if (event) {
-      // expandItem(event);
-      // updateGridData(event.item);
+      expandItem(event);
+      updateGridData(event.item);
     }
   };
 
@@ -75,7 +75,6 @@ const App = () => {
     }
   };
   
-  console.log('tree data', treeData)
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
         <div className="k-filemanager-header">
@@ -88,7 +87,7 @@ const App = () => {
           onChange={handleSplitterChange} 
         >
           <FolderTree 
-            data={data}
+            data={treeData}
             onItemClick={handleItemClick}
             />
 
