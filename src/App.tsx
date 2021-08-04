@@ -9,7 +9,7 @@ import { Breadcrumb } from './components/Breadcrumb';
 
 import { initialData } from './data/data';
 import { DataModel, GridDataModel } from './interfaces/FileManagerModels';
-import { convertToTreeData, convertToGridData } from './helpers/helperMethods';
+import { convertToTreeData, convertToGridData, searchTreeItem } from './helpers/helperMethods';
 import { useInternationalization } from '@progress/kendo-react-intl';
 
 const splitterPanes = [
@@ -30,6 +30,7 @@ const App = () => {
   const [data, setData] = React.useState<DataModel[]>(initialData);
   const [panes, setPanes] = React.useState(splitterPanes);
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
+  const [fileData, setFileData] = React.useState(null);
   const intl = useInternationalization();
 
   const treeData = React.useMemo(
@@ -47,7 +48,7 @@ const App = () => {
     },
     [data, gridData, intl]
   );
-  
+
   const expandItem = event => {
     if (event.item.items.length) {
       const itemIndex = data.findIndex(item => item.name === event.item.name);
@@ -65,7 +66,10 @@ const App = () => {
   const handleItemClick = event => {
     if (event) {
       expandItem(event);
-      updateGridData(event.item);
+      const currTreeItem = searchTreeItem(data, event.item);
+      console.log(currTreeItem);
+      // updateGridData(event.item);
+      // setFileData(event.item);
     }
   };
 
@@ -96,7 +100,7 @@ const App = () => {
             <FolderStructure data={gridData} />
           </div>
 
-          <FileInformation data={data} />
+          <FileInformation data={fileData} />
         </Splitter>
       </div>
     </div>

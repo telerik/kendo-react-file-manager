@@ -1,6 +1,6 @@
 export const FileInformation = (props: any) => {
     return (
-        props.data === []
+        !props.data
             ? NoDataRendering()
             : props.data.length > 1
                 ? MultipleSelectionRendering(props.data)
@@ -26,19 +26,19 @@ const FileSelectionRendering = data => {
                 <span className="k-file-preview">
                     <span className="k-file-icon k-icon k-i-file-image"></span>
                 </span>
-                <span className="k-file-name k-single-file-selected">file.png</span>
+                <span className="k-file-name k-single-file-selected">{data.name}</span>
                 <dl className="k-file-meta">
-                    <dt className="k-file-meta-label">Type: </dt>
-                    <dd className="k-file-meta-value k-file-type">image</dd>
+                    <dt className="k-file-meta-label">Type:  </dt>
+                    <dd className="k-file-meta-value k-file-type"> image</dd>
                     <dd className="k-line-break"></dd>
-                    <dt className="k-file-meta-label">Size: </dt>
-                    <dd className="k-file-meta-value k-file-size">72 KB</dd>
+                    <dt className="k-file-meta-label">Size:  </dt>
+                    <dd className="k-file-meta-value k-file-size"> {data.size}</dd>
                     <dd className="k-line-break"></dd>
-                    <dt className="k-file-meta-label">Date Created: </dt>
-                    <dd className="k-file-meta-value k-file-created">12/24/2019 1:57:36 PM</dd>
+                    <dt className="k-file-meta-label">Date Created:  </dt>
+                    <dd className="k-file-meta-value k-file-created"> {data.dateCreated}</dd>
                     <dd className="k-line-break"></dd>
-                    <dt className="k-file-meta-label">Date Modified: </dt>
-                    <dd className="k-file-meta-value k-file-modified">11/25/2019 3:23:45 PM</dd>
+                    <dt className="k-file-meta-label">Date Modified:  </dt>
+                    <dd className="k-file-meta-value k-file-modified"> {data.dateModified}</dd>
                     <dd className="k-line-break"></dd>
                 </dl>
             </div>
