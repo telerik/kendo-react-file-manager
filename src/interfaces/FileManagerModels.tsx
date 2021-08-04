@@ -16,7 +16,7 @@ export interface TreeDataModel {
 
 export interface GridDataModel {
     name: string,
-    dateCreated?: string,
+    dateCreated?: Date,
     size?: number,
     icon?: string,
     items?: DataModel[]

@@ -10,7 +10,7 @@ import { Breadcrumb } from './components/Breadcrumb';
 import { initialData } from './data/data';
 import { DataModel, GridDataModel } from './interfaces/FileManagerModels';
 import { convertToTreeData, convertToGridData, searchTreeItem } from './helpers/helperMethods';
-import { useInternationalization } from '@progress/kendo-react-intl';
+// import { useInternationalization } from '@progress/kendo-react-intl';
 
 const splitterPanes = [
   {
@@ -30,8 +30,9 @@ const App = () => {
   const [data, setData] = React.useState<DataModel[]>(initialData);
   const [panes, setPanes] = React.useState(splitterPanes);
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
+  const [selectedItem, setSelectedItem] = React.useState(null);
   const [fileData, setFileData] = React.useState(null);
-  const intl = useInternationalization();
+  // const intl = useInternationalization();
 
   const treeData = React.useMemo(
     () => convertToTreeData(data),
@@ -40,13 +41,13 @@ const App = () => {
   
   const updateGridData = React.useCallback(
     (curItem?: DataModel) => {
-      const newGridData = curItem && gridData ? convertToGridData(gridData, intl, curItem) : convertToGridData(data, intl);
-      // console.log('new data', newGridData)
+      const newGridData = convertToGridData(curItem);
+      
       if (newGridData) {
         setGridData(newGridData);
       }
     },
-    [data, gridData, intl]
+    []
   );
 
   const expandItem = event => {
@@ -65,11 +66,12 @@ const App = () => {
 
   const handleItemClick = event => {
     if (event) {
+      const newSelectedItem = searchTreeItem(data, event.item);
+
       expandItem(event);
-      const currTreeItem = searchTreeItem(data, event.item);
-      console.log(currTreeItem);
-      // updateGridData(event.item);
-      // setFileData(event.item);
+      setSelectedItem(newSelectedItem);
+      updateGridData(newSelectedItem);
+      setFileData(event.item);
     }
   };
 
@@ -92,6 +94,7 @@ const App = () => {
         >
           <FolderTree 
             data={treeData}
+            selectedItem={selectedItem}
             onItemClick={handleItemClick}
             />
 

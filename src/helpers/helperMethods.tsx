@@ -16,21 +16,11 @@ export const convertToTreeData = (data: DataModel[]) => {
     return treeData;
 }
 
-export const convertToGridData = (data, intl, selectedItem?: DataModel) => {
+export const convertToGridData = (selectedItem: DataModel | null = null) => {
     const newGridData = [] as GridDataModel[];
 
-    const index: number = selectedItem ? data.findIndex(item => item.name === selectedItem.name) : 0;
-    const hasItems: boolean = !!selectedItem?.items?.length;
-
-    let curData;
-
-
-    if (index >= 0) {
-      curData = data[index].items ? data[index].items : null;
-    }
-
-    if (curData && hasItems) {
-      curData.forEach(item => {
+    if (selectedItem?.items) {
+      selectedItem.items.forEach(item => {
         // TODO
         // set the icon depending on the extension
         
