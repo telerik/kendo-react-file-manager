@@ -1,5 +1,6 @@
 import { useInternationalization } from '@progress/kendo-react-intl';
-import { convertDateFormat } from '../helpers/helperMethods';
+import { convertDateFormat, convertExtensionToIcon } from '../helpers/helperMethods';
+import { classNames } from '@progress/kendo-react-common';
 
 export const FileInformation = (props: any) => {
     return (props.data
@@ -22,17 +23,18 @@ const FileSelectionRendering = data => {
     const intl = useInternationalization();
     const dateCreated = convertDateFormat(data.dateCreated, intl).toString();
     const dateModified = convertDateFormat(data.dateModified, intl).toString();
+    const iconObject = convertExtensionToIcon(data.name);
 
     return (
         <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
             <div className="k-file-info">
                 <span className="k-file-preview">
-                    <span className="k-file-icon k-icon k-i-file-image"></span>
+                    <span className={classNames("k-file-icon k-icon", iconObject.icon)}></span>
                 </span>
                 <span className="k-file-name k-single-file-selected">{data.name}</span>
                 <dl className="k-file-meta">
                     <dt className="k-file-meta-label">Type:  </dt>
-                    <dd className="k-file-meta-value k-file-type"> image</dd>
+                    <dd className= {"k-file-meta-value k-file-type"}> {iconObject.type}</dd>
                     <dd className="k-line-break"></dd>
                     <dt className="k-file-meta-label">Size:  </dt>
                     <dd className="k-file-meta-value k-file-size"> {data.size}</dd>

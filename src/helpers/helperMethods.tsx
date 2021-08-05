@@ -1,13 +1,46 @@
 
 import { DataModel, TreeDataModel, GridDataModel } from '../interfaces/FileManagerModels';
 
+// .xlsx && .xls  => excel
+// .jpg && .png   => picture
+// .txt && .doc/x => text
+// no extension   => folder
+export const convertExtensionToIcon = (item: string) => {
+  const extension = item?.split('.')[1];
+
+  switch (extension) {
+    case 'xlsx': case 'xls':
+      return {
+        icon: 'k-i-file-data',
+        type: 'Data'
+      };
+    case 'jpg': case 'png':
+      return {
+        icon: 'k-i-file-image',
+        type: 'Image'
+      };
+    case 'txt': case 'doc': case 'docx':
+      return {
+        icon: 'k-i-file-txt',
+        type: 'Text'
+      };
+    default:
+      return {
+        icon: 'k-i-folder',
+        type: 'Folder'
+      };
+  };
+}
+
+export const convertDateFormat = (date, intl) => {
+  return intl.formatDate(date, 'd.MM.y  h:mm:ss aa  EEEE');
+}
+
 const addNewData = (data, intl) => {
   const newData = [] as GridDataModel[];
 
   if (data) {
     data.forEach(item => {
-      // TODO
-      // set the icon depending on the extension
       const itemDate = convertDateFormat(item.dateCreated, intl);
   
       newData.push({
@@ -15,7 +48,7 @@ const addNewData = (data, intl) => {
         dateCreated: itemDate,
         size: item.size,
         items: item.items,
-        icon: 'k-i-file'
+        icon: item.icon
       })
     });
   }
@@ -69,8 +102,4 @@ export const searchTreeItem = (data, curItem) => {
   } else {
     return null;
   }
-}
-
-export const convertDateFormat = (date, intl) => {
-  return intl.formatDate(date, 'd.MM.y  h:mm:ss aa  EEEE');
 }

@@ -18,6 +18,6 @@ export interface GridDataModel {
     name: string,
     dateCreated?: Date,
     size?: number,
-    icon?: string,
+    icon?: { icon?: string; type?: string },
     items?: DataModel[]
 }
