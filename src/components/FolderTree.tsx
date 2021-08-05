@@ -2,10 +2,10 @@ import * as React from 'react';
 import { TreeView, TreeViewItemClickEvent } from '@progress/kendo-react-treeview'
 
 export const FolderTree = (props: any) => {
-    let selectedItem: any = React.useMemo(
-        () => props.selectedItem,
-        [props.selectedItem]
-    )
+    // let selectedItem: any = React.useMemo(
+    //     () => props.selectedItem,
+    //     [props.selectedItem]
+    // )
 
     const handleExpandChange = (event: any) => {
         event.item.expanded = !event.item.expanded;

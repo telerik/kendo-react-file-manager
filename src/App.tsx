@@ -9,8 +9,8 @@ import { Breadcrumb } from './components/Breadcrumb';
 
 import { initialData } from './data/data';
 import { DataModel, GridDataModel } from './interfaces/FileManagerModels';
-import { convertToTreeData, convertToGridData, searchTreeItem } from './helpers/helperMethods';
-// import { useInternationalization } from '@progress/kendo-react-intl';
+import { formatData, convertToTreeData, convertToGridData, searchTreeItem } from './helpers/helperMethods';
+import { useInternationalization } from '@progress/kendo-react-intl';
 
 const splitterPanes = [
   {
@@ -27,12 +27,13 @@ const splitterPanes = [
 ];
 
 const App = () => {
-  const [data, setData] = React.useState<DataModel[]>(initialData);
+  const intl = useInternationalization();
+
+  const [data, setData] = React.useState<DataModel[]>(formatData(initialData, intl));
   const [panes, setPanes] = React.useState(splitterPanes);
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
   const [selectedItem, setSelectedItem] = React.useState(null);
-  const [fileData, setFileData] = React.useState(null);
-  // const intl = useInternationalization();
+  const [fileData, setFileData] = React.useState<null | number | Object>(null);
 
   const treeData = React.useMemo(
     () => convertToTreeData(data),
@@ -41,13 +42,29 @@ const App = () => {
   
   const updateGridData = React.useCallback(
     (curItem?: DataModel) => {
-      const newGridData = convertToGridData(curItem);
-      
+      const newGridData = convertToGridData(curItem, intl);
       if (newGridData) {
         setGridData(newGridData);
       }
     },
     []
+  );
+  
+  const updateFileData = React.useCallback(
+    (selection) => {
+      const numberOfSelectedItems = Object.keys(selection).length;
+
+      if (numberOfSelectedItems > 1) {
+        setFileData(Object.keys(selection).length);
+      } else if (numberOfSelectedItems === 1) {
+        const curSelectedItem = { name: Object.keys(selection)[0] };
+        const newFileData = searchTreeItem(data, curSelectedItem);
+        setFileData(newFileData)
+      } else {
+        setFileData(null);
+      }
+    },
+    [data]
   );
 
   const expandItem = event => {
@@ -80,6 +97,12 @@ const App = () => {
       setPanes(event.newState);
     }
   };
+
+  const handleSelectionChange = event => {
+    if (event) {
+      updateFileData(event.selected);
+    }
+  }
   
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
@@ -100,7 +123,7 @@ const App = () => {
 
           <div className="k-filemanager-content">
             <Breadcrumb data={data}/>
-            <FolderStructure data={gridData} />
+            <FolderStructure data={gridData} onSelectionChange={handleSelectionChange} />
           </div>
 
           <FileInformation data={fileData} />
