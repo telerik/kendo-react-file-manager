@@ -7,11 +7,17 @@ import {
 } from '@progress/kendo-react-buttons';
 // import { Upload } from '@progress/kendo-react-upload';
 import { Switch, Input } from "@progress/kendo-react-inputs";
+import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods';
 
 export const FileManagerToolbar = (props: any) => {
-    const [selectedBtn, setSelectedBtn] = React.useState<{gridView: boolean, listView: boolean}>({
+    const [viewBtnGroup, setViewBtnGroup] = React.useState<{gridView: boolean, listView: boolean}>({
         gridView: true,
         listView: false
+    });
+
+    const [sortBtnGroup, setSortBtnGroup] = React.useState<{sortAsc: boolean, sortDesc: boolean}>({
+        sortAsc: true,
+        sortDesc: false
     });
 
     const splitBtnItems = [
@@ -20,7 +26,7 @@ export const FileManagerToolbar = (props: any) => {
         { text: 'File Size'},
         { text: 'Date Created'},
         { text: 'Date Modified'}
-    ]
+    ];
 
     const handleInputChange = event => {
         props.onInputChange.call(undefined, {
@@ -40,20 +46,8 @@ export const FileManagerToolbar = (props: any) => {
 
     const handleGridViewBtnClick = event => {
         if (event) {
-            let newBtnGroupState;
-            if (selectedBtn.gridView) {
-                newBtnGroupState = {
-                    gridView: false,
-                    listView: true
-                }
-                setSelectedBtn(newBtnGroupState);
-            } else {
-                newBtnGroupState = {
-                    gridView: true,
-                    listView: false
-                }
-                setSelectedBtn(newBtnGroupState);
-            }
+            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup);
+            setViewBtnGroup(newBtnGroupState);
 
             props.onViewBtnSelection.call(undefined, {
                 viewValue: newBtnGroupState,
@@ -65,20 +59,8 @@ export const FileManagerToolbar = (props: any) => {
 
     const handleListViewBtnClick = event => {
         if (event) {
-            let newBtnGroupState;
-            if (selectedBtn.listView) {
-                newBtnGroupState = {
-                    gridView: true,
-                    listView: false
-                }
-                setSelectedBtn(newBtnGroupState);
-            } else {
-                newBtnGroupState = {
-                    gridView: false,
-                    listView: true
-                }
-                setSelectedBtn(newBtnGroupState);
-            }
+            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup);
+            setViewBtnGroup(newBtnGroupState);
 
             props.onViewBtnSelection.call(undefined, {
                 viewValue: newBtnGroupState,
@@ -88,6 +70,32 @@ export const FileManagerToolbar = (props: any) => {
         }
     }
 
+    const handleAscBtnClick = event => {
+        if (event) {
+            const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup);
+            setSortBtnGroup(newBtnGroupState);
+
+            props.onSortBtnSelection.call(undefined, {
+                sortValue: newBtnGroupState,
+                target: event.target,
+                event: event
+            });
+        } 
+    }
+
+    const handleDescSortBtnClick = event => {
+        if (event) {
+            const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup);
+            setSortBtnGroup(newBtnGroupState);
+
+            props.onSortBtnSelection.call(undefined, {
+                sortValue: newBtnGroupState,
+                target: event.target,
+                event: event
+            });
+        } 
+    }
+
     const handleItemClick = event => {
         props.onSplitBtnItemClick.call(undefined, {
             sortType: event.item.text,
@@ -95,17 +103,27 @@ export const FileManagerToolbar = (props: any) => {
             event: event
         });
     }
+
     return (
         <Toolbar className="k-filemanager-toolbar">
             <Button className="k-toolbar-first-visible">New Folder</Button>
             <Button>Upload</Button>
 
             <ButtonGroup>
-                {/* TODO: toggle selected class on condition */}
-                <Button className="k-toggle-button k-state-selected k-button-icon k-group-start">
+                <Button
+                    className="k-toggle-button k-button-icon k-group-start"
+                    togglable={true}
+                    selected={sortBtnGroup.sortAsc}
+                    onClick={handleAscBtnClick}
+                    >
                     <span className="k-icon k-i-sort-asc-sm"></span>
                 </Button>
-                <Button className="k-toggle-button k-button k-button-icon k-group-end">
+                <Button
+                    className="k-toggle-button k-button k-button-icon k-group-end"
+                    togglable={true}
+                    selected={sortBtnGroup.sortDesc}
+                    onClick={handleDescSortBtnClick}
+                    >
                     <span className="k-icon k-i-sort-desc-sm"></span>
                 </Button>
             </ButtonGroup>
@@ -119,7 +137,7 @@ export const FileManagerToolbar = (props: any) => {
                 <Button 
                     className={"k-toggle-button k-button-icon k-group-start"}
                     togglable={true}
-                    selected={selectedBtn.gridView}
+                    selected={viewBtnGroup.gridView}
                     onClick={handleGridViewBtnClick}
                     >
                     <span className="k-icon k-i-grid-layout"></span>
@@ -127,7 +145,7 @@ export const FileManagerToolbar = (props: any) => {
                 <Button 
                     className={"k-toggle-button k-button-icon k-group-end"}
                     togglable={true}
-                    selected={selectedBtn.listView}
+                    selected={viewBtnGroup.listView}
                     onClick={handleListViewBtnClick}
                     >
                     <span className="k-icon k-i-grid"></span>

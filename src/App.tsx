@@ -1,5 +1,8 @@
 import * as React from 'react';
+
 import { Splitter } from '@progress/kendo-react-layout';
+import { useInternationalization } from '@progress/kendo-react-intl';
+import { process } from '@progress/kendo-data-query';
 
 import { FileManagerToolbar } from './components/FileManagerToolbar';
 import { FolderStructure } from './components/FolderStructure';
@@ -9,9 +12,13 @@ import { Breadcrumb } from './components/Breadcrumb';
 
 import { initialData } from './data/data';
 import { DataModel, GridDataModel } from './interfaces/FileManagerModels';
-import { formatData, convertToTreeData, convertToGridData, searchTreeItem } from './helpers/helperMethods';
-import { useInternationalization } from '@progress/kendo-react-intl';
-import { process } from '@progress/kendo-data-query';
+import {
+  formatData,
+  convertToTreeData,
+  convertToGridData,
+  searchTreeItem,
+  getSortField
+} from './helpers/helperMethods';
 
 const splitterPanes = [
   {
@@ -35,15 +42,15 @@ const App = () => {
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [fileData, setFileData] = React.useState<null | number | Object>(null);
-  const [sortType, setSortType] = React.useState<'asc' | 'desc'>('asc');
   const [sortField, setSortField] = React.useState<string>('name');
-  
+  const [sortType, setSortType] = React.useState<'asc' | 'desc' | undefined>('asc');
+
   const initialLogic: "and" | "or" = "and";
  
   const [inputGridData, setInputGridData] = React.useState({
     skip: 0,
     take: 10,
-    sort: [{ field: 'name', dir: undefined }],
+    sort: [{ field: sortField, dir: sortType }],
     filter: {
       logic: initialLogic,
       filters: [
@@ -141,7 +148,7 @@ const App = () => {
       newPanes[2].size = '30%';
       setPanes(newPanes)
     } else {
-      newPanes[2].size = '';
+      newPanes[2].size = '0%';
       setPanes(newPanes)
     }
   }
@@ -156,10 +163,21 @@ const App = () => {
   }
 
   const handleSplitBtnItemClick = event => {
-    console.log('split event inside the app', event);
-    const sortedGrid = inputGridData;
-    console.log('copied data', sortedGrid)
+    const newSortField = getSortField(event.sortType)
+    const newSortedGrid = inputGridData;
 
+    newSortedGrid.sort[0].field = newSortField;
+    setSortField(newSortField);
+    setInputGridData(newSortedGrid);
+  }
+
+  const handleSortBtnSelection = event => {
+    const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
+    const newSortedGrid = inputGridData;
+
+    newSortedGrid.sort[0].dir = newSortDir;
+    setSortType(newSortDir);
+    setInputGridData(newSortedGrid);
   }
 
   return (
@@ -171,6 +189,7 @@ const App = () => {
             onSwitchChange={handleSwitchChange}
             onViewBtnSelection={handleViewBtnSelection}
             onSplitBtnItemClick={handleSplitBtnItemClick}
+            onSortBtnSelection={handleSortBtnSelection}
             />
         </div>
       <div className="k-filemanager-content-container">

@@ -103,3 +103,58 @@ export const searchTreeItem = (data, curItem) => {
     return null;
   }
 }
+
+export const toggleViewBtnGroup = btnGroupState => {
+  let newState;
+  
+  if (btnGroupState.gridView) {
+    newState = {
+        gridView: false,
+        listView: true
+    }
+    return newState;
+  }
+  if (btnGroupState.listView) {
+    newState = {
+        gridView: true,
+        listView: false
+    }
+    return newState;
+  }
+}
+
+export const toggleSortBtnGroup = btnGroupState => {
+  let newState;
+  
+  if (btnGroupState.sortAsc) {
+    newState = {
+      sortAsc: false,
+      sortDesc: true
+    }
+    return newState;
+  }
+  if (btnGroupState.sortDesc) {
+    newState = {
+      sortAsc: true,
+      sortDesc: false
+    }
+    return newState;
+  }
+}
+
+export const getSortField = (typeString: string) => {
+  switch(typeString) {
+    case 'Name':
+      return 'name';
+    case 'Type':
+      return 'type';
+    case 'File Size':
+      return 'size';
+    case 'Date Created':
+      return 'dateCreated';
+    case 'Date Modified':
+      return 'dateModified';
+    default:
+      return '';
+  }
+}
