@@ -1,7 +1,7 @@
 export interface DataModel {
     name: string,
     expanded?: boolean,
-    size?: number,
+    size?: string,
     dateCreated?: Date,
     dateModified?: Date | null,
     items?: DataModel[],
@@ -17,7 +17,7 @@ export interface TreeDataModel {
 export interface GridDataModel {
     name: string,
     dateCreated?: Date,
-    size?: number,
+    size?: string,
     icon?: { icon?: string; type?: string },
     items?: DataModel[]
 }

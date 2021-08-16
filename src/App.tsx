@@ -11,6 +11,7 @@ import { initialData } from './data/data';
 import { DataModel, GridDataModel } from './interfaces/FileManagerModels';
 import { formatData, convertToTreeData, convertToGridData, searchTreeItem } from './helpers/helperMethods';
 import { useInternationalization } from '@progress/kendo-react-intl';
+import { process } from '@progress/kendo-data-query';
 
 const splitterPanes = [
   {
@@ -34,6 +35,24 @@ const App = () => {
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [fileData, setFileData] = React.useState<null | number | Object>(null);
+  const [sortType, setSortType] = React.useState<'asc' | 'desc'>('asc');
+  const [sortField, setSortField] = React.useState<string>('name');
+  
+  const initialLogic: "and" | "or" = "and";
+ 
+  const [inputGridData, setInputGridData] = React.useState({
+    skip: 0,
+    take: 10,
+    sort: [{ field: 'name', dir: undefined }],
+    filter: {
+      logic: initialLogic,
+      filters: [
+        { field: 'name', operator: 'contains', value: '' }
+      ]
+    }
+  });
+
+  const [gridView, setGridView] = React.useState<string>("grid");
 
   const treeData = React.useMemo(
     () => convertToTreeData(data),
@@ -47,7 +66,7 @@ const App = () => {
         setGridData(newGridData);
       }
     },
-    []
+    [intl]
   );
   
   const updateFileData = React.useCallback(
@@ -104,12 +123,56 @@ const App = () => {
     }
   }
   
+  const handleInputChange = event => {
+    setInputGridData({
+        ...inputGridData,
+        filter: {
+          logic: initialLogic,
+          filters: [
+            { field: 'name', operator: 'contains', value: event.inputValue }
+          ]
+        }
+    });
+  };
+
+  const handleSwitchChange = event => {
+    const newPanes = panes.slice(0)
+    if (event.switchValue) {
+      newPanes[2].size = '30%';
+      setPanes(newPanes)
+    } else {
+      newPanes[2].size = '';
+      setPanes(newPanes)
+    }
+  }
+
+  const handleViewBtnSelection = event => {
+    if (event.viewValue.gridView) {
+      setGridView('grid');
+    }
+    if (event.viewValue.listView) {
+      setGridView('list');
+    }
+  }
+
+  const handleSplitBtnItemClick = event => {
+    console.log('split event inside the app', event);
+    const sortedGrid = inputGridData;
+    console.log('copied data', sortedGrid)
+
+  }
+
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
         <div className="k-filemanager-header">
-          <FileManagerToolbar data={data} />
+          <FileManagerToolbar 
+            data={data}
+            onInputChange={handleInputChange}
+            onSwitchChange={handleSwitchChange}
+            onViewBtnSelection={handleViewBtnSelection}
+            onSplitBtnItemClick={handleSplitBtnItemClick}
+            />
         </div>
-
       <div className="k-filemanager-content-container">
         <Splitter 
           panes={panes} 
@@ -120,12 +183,14 @@ const App = () => {
             selectedItem={selectedItem}
             onItemClick={handleItemClick}
             />
-
           <div className="k-filemanager-content">
             <Breadcrumb data={data}/>
-            <FolderStructure data={gridData} onSelectionChange={handleSelectionChange} />
+            <FolderStructure 
+              view={gridView}
+              data={gridData ? process(gridData.slice(0), inputGridData) : null}
+              onSelectionChange={handleSelectionChange} 
+              />
           </div>
-
           <FileInformation data={fileData} />
         </Splitter>
       </div>

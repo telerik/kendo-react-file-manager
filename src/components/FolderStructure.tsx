@@ -6,7 +6,9 @@ import {
   getSelectedStateFromKeyDown
 } from '@progress/kendo-react-grid';
 import { orderBy } from '@progress/kendo-data-query';
-import { getter } from '@progress/kendo-react-common';
+import { getter, classNames } from '@progress/kendo-react-common';
+import { convertExtensionToIcon } from '../helpers/helperMethods';
+import { GridDataModel } from '../interfaces/FileManagerModels';
 
 const initialSort = [{
   field: 'Name',
@@ -22,15 +24,14 @@ export const FolderStructure = (props: any) => {
     const [selected, setSelected] = React.useState({});
 
     const data = React.useMemo(
-      () => {
-        return (props.data 
-          ? props.data.map(item => ({
+      () => 
+        (props.data.data 
+          ? orderBy(props.data.data.map(item => ({
             ...item,
             [SELECTED_FIELD]: selected[idGetter(item)]
-          }))
-          : props.data);
-      },
-      [props.data, selected]
+            })), sort)
+          : null),
+      [props.data, selected, sort]
     );
 
     const handleOnSortChange = event => {
@@ -64,25 +65,46 @@ export const FolderStructure = (props: any) => {
     };
 
     return (
-      <Grid 
-        className="k-filemanager-grid k-grid-display-block k-editable" 
-        data={data ? orderBy(data, sort) : null}
-        sortable={true}
-        sort={sort}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          drag: true,
-          mode: 'multiple'
-        }}
-        navigatable={true}
-        onSortChange={handleOnSortChange}
-        onSelectionChange={handleOnSelectionChange}
-        onKeyDown={handleOnKeyDown}
-        >
-        <Column field="name" title="Name" />
-        <Column field="dateCreated" title="Date Created" />
-        <Column field="size" title="File Size" />
-      </Grid>
+      props.view === 'grid' 
+        ?
+          <Grid 
+            className={"k-filemanager-grid k-grid-display-block k-editable"}
+            data={data}
+            sortable={true}
+            sort={sort}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              drag: true,
+              mode: 'multiple'
+            }}
+            navigatable={true}
+            onSortChange={handleOnSortChange}
+            onSelectionChange={handleOnSelectionChange}
+            onKeyDown={handleOnKeyDown}
+            >
+            <Column field="name" title="Name" />
+            <Column field="dateCreated" title="Date Created" />
+            <Column field="size" title="File Size" />
+          </Grid>
+        :
+          <div className="k-listview k-selectable k-filemanager-listview">
+          <div className="k-listview-content k-d-flex k-flex-row k-flex-wrap">
+              { data ? data.map((item: any) => {
+                const iconObject: { icon?: string; type?: string } = convertExtensionToIcon(item.name);
+                return (
+                  <>
+                  {/* k-state-selected */}
+                    <div className="k-listview-item">
+                      <span className="k-file-preview">
+                        <span className={classNames("k-file-icon k-icon", iconObject ? iconObject.icon : '')} />
+                      </span>
+                      <span className="k-file-name">{item.name}</span>
+                    </div>
+                  </>
+                )
+              }) : '' }
+              </div>
+          </div>
     );
 }
