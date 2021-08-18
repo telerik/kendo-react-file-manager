@@ -21,3 +21,13 @@ export interface GridDataModel {
     icon?: { icon?: string; type?: string },
     items?: DataModel[]
 }
+
+export interface GridViewBtnGroup {
+    gridView: boolean,
+    listView: boolean
+}
+
+export interface SortingBtnGroup {
+    sortAsc: boolean,
+    sortDesc: boolean
+}

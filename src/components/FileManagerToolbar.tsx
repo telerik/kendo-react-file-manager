@@ -5,21 +5,18 @@ import {
     ButtonGroup,
     SplitButton
 } from '@progress/kendo-react-buttons';
-// import { Upload } from '@progress/kendo-react-upload';
 import { Switch, Input } from "@progress/kendo-react-inputs";
+import { Dialog, DialogActionsBar } from '@progress/kendo-react-dialogs';
+import { Upload } from '@progress/kendo-react-upload';
 import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods';
+import { GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
 
 export const FileManagerToolbar = (props: any) => {
-    const [viewBtnGroup, setViewBtnGroup] = React.useState<{gridView: boolean, listView: boolean}>({
-        gridView: true,
-        listView: false
-    });
+    const [viewBtnGroup, setViewBtnGroup] = React.useState<GridViewBtnGroup>({ gridView: true, listView: false });
+    const [sortBtnGroup, setSortBtnGroup] = React.useState<SortingBtnGroup>({ sortAsc: true, sortDesc: false });
+    const [visible, setVisible] = React.useState<boolean>(false);
 
-    const [sortBtnGroup, setSortBtnGroup] = React.useState<{sortAsc: boolean, sortDesc: boolean}>({
-        sortAsc: true,
-        sortDesc: false
-    });
-
+    // from the app
     const splitBtnItems = [
         { text: 'Name' },
         { text: 'Type' },
@@ -104,10 +101,36 @@ export const FileManagerToolbar = (props: any) => {
         });
     }
 
+    const handleToggleDialog = event => {
+        console.log('toggle btn', event) 
+        setVisible(!visible);
+    }
+
     return (
         <Toolbar className="k-filemanager-toolbar">
             <Button className="k-toolbar-first-visible">New Folder</Button>
-            <Button>Upload</Button>
+            <Button onClick={handleToggleDialog}>Upload</Button>
+            { visible &&
+                <Dialog  
+                    title={'Upload Files'}
+                    className={'k-filemanager-upload-dialog'}
+                    onClose={handleToggleDialog}
+                    contentStyle={{ width: '530px' }}
+                    >
+                    <Upload
+                        batch={false}
+                        multiple={true}
+                        defaultFiles={[]}
+                        withCredentials={false}
+                        saveUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/save'}
+                        removeUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/remove'}
+                        />
+                    <DialogActionsBar layout={'end'}>
+                        <Button > Clear List</Button>
+                        <Button primary={true} > Done </Button>
+                    </DialogActionsBar>
+                </Dialog >
+            }
 
             <ButtonGroup>
                 <Button
