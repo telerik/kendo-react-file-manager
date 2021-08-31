@@ -16,15 +16,6 @@ export const FileManagerToolbar = (props: any) => {
     const [sortBtnGroup, setSortBtnGroup] = React.useState<SortingBtnGroup>({ sortAsc: true, sortDesc: false });
     const [visible, setVisible] = React.useState<boolean>(false);
 
-    // from the app
-    const splitBtnItems = [
-        { text: 'Name' },
-        { text: 'Type' },
-        { text: 'File Size'},
-        { text: 'Date Created'},
-        { text: 'Date Modified'}
-    ];
-
     const handleInputChange = event => {
         props.onInputChange.call(undefined, {
             inputValue: event.value,
@@ -152,7 +143,7 @@ export const FileManagerToolbar = (props: any) => {
             </ButtonGroup>
             <SplitButton 
                 text={'Sort By'}
-                items={splitBtnItems}
+                items={props.splitItems}
                 onItemClick={handleItemClick}
                 >
             </SplitButton>

@@ -2,7 +2,11 @@ import * as React from 'react';
 
 import { Splitter } from '@progress/kendo-react-layout';
 import { useInternationalization } from '@progress/kendo-react-intl';
-import { process } from '@progress/kendo-data-query';
+import { process, orderBy } from '@progress/kendo-data-query';
+import { getter } from '@progress/kendo-react-common';
+import { 
+  getSelectedState,
+  getSelectedStateFromKeyDown } from '@progress/kendo-react-grid';
 
 import { FileManagerToolbar } from './components/FileManagerToolbar';
 import { FolderStructure } from './components/FolderStructure';
@@ -16,8 +20,7 @@ import {
   formatData,
   convertToTreeData,
   convertToGridData,
-  searchTreeItem,
-  getSortField
+  searchTreeItem
 } from './helpers/helperMethods';
 
 const splitterPanes = [
@@ -34,23 +37,45 @@ const splitterPanes = [
   },
 ];
 
+const initialSort = [{
+  field: 'Name',
+  dir: 'asc'
+}];
+
+const DATA_ITEM_KEY = 'name';
+const SELECTED_FIELD = 'selected';
+const idGetter = getter(DATA_ITEM_KEY);
+
 const App = () => {
   const intl = useInternationalization();
 
   const [data, setData] = React.useState<DataModel[]>(formatData(initialData, intl));
   const [panes, setPanes] = React.useState(splitterPanes);
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
-  const [selectedItem, setSelectedItem] = React.useState(null);
+  
+  const [sort, setSort] = React.useState<any>(initialSort);
+  
+  const [selected, setSelected] = React.useState({});
+  const [selectedTreeItem, setSelectedTreeItem] = React.useState(null);
+
   const [fileData, setFileData] = React.useState<null | number | Object>(null);
-  const [sortField, setSortField] = React.useState<string>('name');
-  const [sortType, setSortType] = React.useState<'asc' | 'desc' | undefined>('asc');
+  // const [sortField, setSortField] = React.useState<string>('name');
+  // const [sortType, setSortType] = React.useState<'asc' | 'desc' | undefined>('asc');
+
+  const splitItems = [
+    { text: 'Name' },
+    { text: 'Type' },
+    { text: 'File Size'},
+    { text: 'Date Created'},
+    { text: 'Date Modified'}
+  ];
 
   const initialLogic: "and" | "or" = "and";
  
   const [inputGridData, setInputGridData] = React.useState({
     skip: 0,
     take: 10,
-    sort: [{ field: sortField, dir: sortType }],
+    sort: sort,
     filter: {
       logic: initialLogic,
       filters: [
@@ -68,12 +93,21 @@ const App = () => {
   
   const updateGridData = React.useCallback(
     (curItem?: DataModel) => {
-      const newGridData = convertToGridData(curItem, intl);
+      let newGridData = convertToGridData(curItem, intl);
       if (newGridData) {
+        newGridData = orderBy(newGridData.map(item => {
+          // console.log('item', item);
+          return ({
+        ...item,
+        [SELECTED_FIELD]: selected[idGetter(item)]
+        })}
+        ), sort)
+
+        // update the grid state
         setGridData(newGridData);
       }
     },
-    [intl]
+    [intl, selected, sort]
   );
   
   const updateFileData = React.useCallback(
@@ -107,12 +141,13 @@ const App = () => {
     }
   };
 
-  const handleItemClick = event => {
+  const handleTreeItemClick = event => {
     if (event) {
       const newSelectedItem = searchTreeItem(data, event.item);
 
+      // sets the tree selection - newSelectedItem
       expandItem(event);
-      setSelectedItem(newSelectedItem);
+      setSelectedTreeItem(newSelectedItem);
       updateGridData(newSelectedItem);
       setFileData(event.item);
     }
@@ -125,8 +160,30 @@ const App = () => {
   };
 
   const handleSelectionChange = event => {
-    if (event) {
-      updateFileData(event.selected);
+    const selectedState = getSelectedState({
+      event: event.event,
+      selectedState: selected,
+      dataItemKey: DATA_ITEM_KEY
+    });
+    
+    // selection state is update
+    setSelected(selectedState);
+    updateFileData(selectedState);
+  }
+
+  const handelGridKeyDown = event => {
+    const selectedState = getSelectedStateFromKeyDown({
+      event: event.event,
+      selectedState: selected,
+      dataItemKey: DATA_ITEM_KEY
+    });
+    setSelected(selectedState);
+  }
+
+  const handleGridSortChange = event => {
+    if (event.sort) {
+      // The sort variable is updated but the sort is not applied correctly
+      setSort(event.sort);
     }
   }
   
@@ -162,34 +219,36 @@ const App = () => {
     }
   }
 
-  const handleSplitBtnItemClick = event => {
-    const newSortField = getSortField(event.sortType)
-    const newSortedGrid = inputGridData;
+  // const handleSplitBtnItemClick = event => {
+  //   const newSortField = getSortField(event.sortType)
+  //   const newSortedGrid = inputGridData;
 
-    newSortedGrid.sort[0].field = newSortField;
-    setSortField(newSortField);
-    setInputGridData(newSortedGrid);
-  }
+  //   newSortedGrid.sort[0].field = newSortField;
+  //   setSortField(newSortField);
+  //   setInputGridData(newSortedGrid);
+  // }
 
-  const handleSortBtnSelection = event => {
-    const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
-    const newSortedGrid = inputGridData;
+  // const handleSortBtnSelection = event => {
+  //   const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
+  //   const newSortedGrid = inputGridData;
 
-    newSortedGrid.sort[0].dir = newSortDir;
-    setSortType(newSortDir);
-    setInputGridData(newSortedGrid);
-  }
+  //   newSortedGrid.sort[0].dir = newSortDir;
+  //   setSortType(newSortDir);
+  // sort
+  //   setInputGridData(newSortedGrid);
+  // }
 
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
         <div className="k-filemanager-header">
           <FileManagerToolbar 
             data={data}
+            splitItems={splitItems}
             onInputChange={handleInputChange}
             onSwitchChange={handleSwitchChange}
             onViewBtnSelection={handleViewBtnSelection}
-            onSplitBtnItemClick={handleSplitBtnItemClick}
-            onSortBtnSelection={handleSortBtnSelection}
+            // onSplitBtnItemClick={handleSplitBtnItemClick}
+            // onSortBtnSelection={handleSortBtnSelection}
             />
         </div>
       <div className="k-filemanager-content-container">
@@ -199,15 +258,19 @@ const App = () => {
         >
           <FolderTree 
             data={treeData}
-            selectedItem={selectedItem}
-            onItemClick={handleItemClick}
+            selectedItem={selectedTreeItem}
+            onItemClick={handleTreeItemClick}
             />
           <div className="k-filemanager-content">
             <Breadcrumb data={data}/>
             <FolderStructure 
               view={gridView}
+              sort={sort}
+              selected={SELECTED_FIELD}
               data={gridData ? process(gridData.slice(0), inputGridData) : null}
-              onSelectionChange={handleSelectionChange} 
+              onSelectionChange={handleSelectionChange}
+              onSortChange={handleGridSortChange}
+              onGridKeyDown={handelGridKeyDown}
               />
           </div>
           <FileInformation data={fileData} />
