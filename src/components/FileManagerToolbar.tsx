@@ -34,7 +34,7 @@ export const FileManagerToolbar = (props: any) => {
 
     const handleGridViewBtnClick = event => {
         if (event) {
-            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup);
+            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup, 'grid');
             setViewBtnGroup(newBtnGroupState);
 
             props.onViewBtnSelection.call(undefined, {
@@ -47,7 +47,7 @@ export const FileManagerToolbar = (props: any) => {
 
     const handleListViewBtnClick = event => {
         if (event) {
-            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup);
+            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup, 'list');
             setViewBtnGroup(newBtnGroupState);
 
             props.onViewBtnSelection.call(undefined, {
@@ -60,7 +60,7 @@ export const FileManagerToolbar = (props: any) => {
 
     const handleAscBtnClick = event => {
         if (event) {
-            const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup);
+            const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'asc');
             setSortBtnGroup(newBtnGroupState);
 
             props.onSortBtnSelection.call(undefined, {
@@ -73,7 +73,7 @@ export const FileManagerToolbar = (props: any) => {
 
     const handleDescSortBtnClick = event => {
         if (event) {
-            const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup);
+            const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'desc');
             setSortBtnGroup(newBtnGroupState);
 
             props.onSortBtnSelection.call(undefined, {
@@ -93,7 +93,6 @@ export const FileManagerToolbar = (props: any) => {
     }
 
     const handleUploadDialog = event => {
-        console.log('toggle btn', event) 
         setVisible(!visible);
     }
 

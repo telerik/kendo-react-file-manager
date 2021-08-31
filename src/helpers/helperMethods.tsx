@@ -104,42 +104,24 @@ export const searchTreeItem = (data, curItem) => {
   }
 }
 
-export const toggleViewBtnGroup = btnGroupState => {
-  let newState;
-  
-  if (btnGroupState.gridView) {
-    newState = {
-        gridView: false,
-        listView: true
-    }
-    return newState;
+export const toggleViewBtnGroup = (btnGroupState, view: string) => {
+  if (!btnGroupState.listView && view !== 'grid') {
+    return { gridView: false, listView: true };
   }
-  if (btnGroupState.listView) {
-    newState = {
-        gridView: true,
-        listView: false
-    }
-    return newState;
+  if (!btnGroupState.gridView && view !== 'list') {
+    return { gridView: true, listView: false };
   }
+  return { gridView: false, listView: false };
 }
 
-export const toggleSortBtnGroup = btnGroupState => {
-  let newState;
-  
-  if (btnGroupState.sortAsc) {
-    newState = {
-      sortAsc: false,
-      sortDesc: true
-    }
-    return newState;
+export const toggleSortBtnGroup = (btnGroupState, curState: string) => {
+  if (!btnGroupState.sortDesc && curState !== 'asc') {
+    return { sortAsc: false, sortDesc: true };
   }
-  if (btnGroupState.sortDesc) {
-    newState = {
-      sortAsc: true,
-      sortDesc: false
-    }
-    return newState;
+  if (!btnGroupState.sortAsc && curState !== 'desc') {
+    return { sortAsc: true, sortDesc: false };
   }
+  return { sortAsc: false, sortDesc: false };
 }
 
 export const getSortField = (typeString: string) => {

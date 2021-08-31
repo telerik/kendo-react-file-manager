@@ -233,6 +233,7 @@ const App = () => {
   }
 
   const handleSortBtnSelection = event => {
+    console.log('event inside app', event.sortValue)
     const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
     const newSortedGrid = inputGridData;
 
