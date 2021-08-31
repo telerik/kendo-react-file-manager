@@ -4,10 +4,7 @@ import { Splitter } from '@progress/kendo-react-layout';
 import { useInternationalization } from '@progress/kendo-react-intl';
 import { process, orderBy } from '@progress/kendo-data-query';
 import { getter } from '@progress/kendo-react-common';
-import { 
-  getSelectedState,
-  getSelectedStateFromKeyDown,
-} from '@progress/kendo-react-grid';
+import { getSelectedState, getSelectedStateFromKeyDown, } from '@progress/kendo-react-grid';
 
 import { FileManagerToolbar } from './components/FileManagerToolbar';
 import { FolderStructure } from './components/FolderStructure';
@@ -53,14 +50,15 @@ const App = () => {
 
   const [data, setData] = React.useState<DataModel[]>(formatData(initialData, intl));
   const [panes, setPanes] = React.useState(splitterPanes);
+
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
-  
   const [sort, setSort] = React.useState<any>(initialSort);
-  
   const [selected, setSelected] = React.useState({});
   const [selectedTreeItem, setSelectedTreeItem] = React.useState(null);
 
   const [fileData, setFileData] = React.useState<null | number | Object>(null);
+  const [files, setFiles] = React.useState([]);
+  const [dialogVisibility, setDialogVisibility] = React.useState<boolean>(false);
 
   const splitItems = [
     { text: 'Name' },
@@ -165,10 +163,9 @@ const App = () => {
       dataItemKey: DATA_ITEM_KEY
     });
     
-    // selection state is update
     setSelected(selectedState);
     updateFileData(selectedState);
-  }
+  };
 
   const handelGridKeyDown = event => {
     const selectedState = getSelectedStateFromKeyDown({
@@ -177,14 +174,13 @@ const App = () => {
       dataItemKey: DATA_ITEM_KEY
     });
     setSelected(selectedState);
-  }
+  };
 
   const handleGridSortChange = event => {
     if (event.sort) {
-      // The sort variable is updated but the sort is not applied correctly
       setSort(event.sort);
     }
-  }
+  };
   
   const handleInputChange = event => {
     setInputGridData({
@@ -207,7 +203,7 @@ const App = () => {
       newPanes[2].size = '0%';
       setPanes(newPanes)
     }
-  }
+  };
 
   const handleViewBtnSelection = event => {
     if (event.viewValue.gridView) {
@@ -216,7 +212,7 @@ const App = () => {
     if (event.viewValue.listView) {
       setGridView('list');
     }
-  }
+  };
 
   const handleSplitBtnItemClick = event => {
     const newSortField = getSortField(event.sortType)
@@ -230,10 +226,9 @@ const App = () => {
     
     setSort(newSort);
     setInputGridData(newSortedGrid);
-  }
+  };
 
   const handleSortBtnSelection = event => {
-    console.log('event inside app', event.sortValue)
     const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
     const newSortedGrid = inputGridData;
 
@@ -245,7 +240,47 @@ const App = () => {
 
     setSort(newSort);
     setInputGridData(newSortedGrid);
-  }
+  };
+
+  const handleFileAdd = event => {
+    setFiles(event.files);
+  };
+
+  const handleFileRemove = event => {
+    setFiles(event.files);
+  };
+
+  const handleFileProgress = event => {
+    setFiles(event.files);
+  };
+
+  const handleFileStatusChange = event => {
+    setFiles(event.files);
+  };
+
+  const handleClearFileList = event => {
+    if (event) {
+      setFiles([]);
+    }
+  };
+
+  const handleUploadDialog = event => {
+    if (event) {
+      setDialogVisibility(!dialogVisibility);
+    }
+  };
+
+  const handleDoneBtnClick = event => {
+    console.log('done event', event);
+    console.log('files', files);
+    console.log('grid data', gridData);
+    
+    let newElement = {};
+    // map through the elements and cast the to the DataGridModel -> add to grid data
+    // newElement['name'] = files.name;
+
+    setDialogVisibility(!dialogVisibility);
+  };
 
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
@@ -253,11 +288,21 @@ const App = () => {
           <FileManagerToolbar 
             data={data}
             splitItems={splitItems}
+            files={files}
+            visible={dialogVisibility}
             onInputChange={handleInputChange}
             onSwitchChange={handleSwitchChange}
             onViewBtnSelection={handleViewBtnSelection}
             onSplitBtnItemClick={handleSplitBtnItemClick}
             onSortBtnSelection={handleSortBtnSelection}
+            onUploadDialog={handleUploadDialog}
+
+            onFileAdd={handleFileAdd}
+            onFileRemove={handleFileRemove}
+            onFileProgress={handleFileProgress}
+            onFileStatusChange={handleFileStatusChange}
+            onClearFileList={handleClearFileList}
+            onDoneBtnClick={handleDoneBtnClick}
             />
         </div>
       <div className="k-filemanager-content-container">

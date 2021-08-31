@@ -30,11 +30,11 @@ export const convertExtensionToIcon = (item: string) => {
         type: 'Folder'
       };
   };
-}
+};
 
 export const convertDateFormat = (date, intl) => {
   return intl.formatDate(date, 'd.MM.y  h:mm:ss aa  EEEE');
-}
+};
 
 const addNewData = (data, intl) => {
   const newData = [] as GridDataModel[];
@@ -53,21 +53,21 @@ const addNewData = (data, intl) => {
     });
   }
   return newData;
-}
+};
 
 export const formatData = (data: DataModel[], intl) => {
   if (data) {
     return addNewData(data, intl);
   }
   return [];
-}
+};
 
 export const convertToGridData = (selectedItem: DataModel | null = null, intl) => {
   if (selectedItem?.items) {
     return addNewData(selectedItem.items, intl);
   }
   return [];
-}
+};
 
 export const convertToTreeData = (data: DataModel[]) => {
     const treeData = [] as TreeDataModel[];
@@ -82,7 +82,7 @@ export const convertToTreeData = (data: DataModel[]) => {
       }
     })
     return treeData;
-}
+};
 
 export const searchTreeItem = (data, curItem) => {
   if (Array.isArray(data)) {
@@ -102,7 +102,7 @@ export const searchTreeItem = (data, curItem) => {
   } else {
     return null;
   }
-}
+};
 
 export const toggleViewBtnGroup = (btnGroupState, view: string) => {
   if (!btnGroupState.listView && view !== 'grid') {
@@ -112,7 +112,7 @@ export const toggleViewBtnGroup = (btnGroupState, view: string) => {
     return { gridView: true, listView: false };
   }
   return { gridView: false, listView: false };
-}
+};
 
 export const toggleSortBtnGroup = (btnGroupState, curState: string) => {
   if (!btnGroupState.sortDesc && curState !== 'asc') {
@@ -122,7 +122,7 @@ export const toggleSortBtnGroup = (btnGroupState, curState: string) => {
     return { sortAsc: true, sortDesc: false };
   }
   return { sortAsc: false, sortDesc: false };
-}
+};
 
 export const getSortField = (typeString: string) => {
   switch(typeString) {
@@ -139,4 +139,4 @@ export const getSortField = (typeString: string) => {
     default:
       return '';
   }
-}
+};

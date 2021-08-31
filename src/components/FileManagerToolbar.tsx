@@ -14,7 +14,6 @@ import { GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerMode
 export const FileManagerToolbar = (props: any) => {
     const [viewBtnGroup, setViewBtnGroup] = React.useState<GridViewBtnGroup>({ gridView: true, listView: false });
     const [sortBtnGroup, setSortBtnGroup] = React.useState<SortingBtnGroup>({ sortAsc: true, sortDesc: false });
-    const [visible, setVisible] = React.useState<boolean>(false);
 
     const handleInputChange = event => {
         props.onInputChange.call(undefined, {
@@ -22,7 +21,7 @@ export const FileManagerToolbar = (props: any) => {
             target: event.target,
             event: event
         });
-    }
+    };
 
     const handleSwitchChange = event => {
         props.onSwitchChange.call(undefined, {
@@ -30,7 +29,7 @@ export const FileManagerToolbar = (props: any) => {
             target: event.target,
             event: event
         });
-    }
+    };
 
     const handleGridViewBtnClick = event => {
         if (event) {
@@ -43,7 +42,7 @@ export const FileManagerToolbar = (props: any) => {
                 event: event
             });
         }
-    }
+    };
 
     const handleListViewBtnClick = event => {
         if (event) {
@@ -56,7 +55,7 @@ export const FileManagerToolbar = (props: any) => {
                 event: event
             });
         }
-    }
+    };
 
     const handleAscBtnClick = event => {
         if (event) {
@@ -69,7 +68,7 @@ export const FileManagerToolbar = (props: any) => {
                 event: event
             });
         } 
-    }
+    };
 
     const handleDescSortBtnClick = event => {
         if (event) {
@@ -82,7 +81,7 @@ export const FileManagerToolbar = (props: any) => {
                 event: event
             });
         } 
-    }
+    };
 
     const handleItemClick = event => {
         props.onSplitBtnItemClick.call(undefined, {
@@ -90,17 +89,67 @@ export const FileManagerToolbar = (props: any) => {
             target: event.target,
             event: event
         });
-    }
+    };
 
     const handleUploadDialog = event => {
-        setVisible(!visible);
-    }
+        props.onUploadDialog.call(undefined, {
+            target: event.target,
+            event: event
+        }); 
+    };
+
+    const handleClearList = event => {
+        props.onClearFileList.call(undefined, {
+            target: event.target,
+            event: event
+        }); 
+    };
+
+    const onAdd = event => {
+        props.onFileAdd.call(undefined, {
+            files: event.newState,
+            target: event.target,
+            event: event
+        });
+    };
+    
+    const onRemove = event => {
+        props.onFileAdd.call(undefined, {
+            files: event.newState,
+            target: event.target,
+            event: event
+        });
+    };
+
+    const onProgress = event => {
+        props.onFileProgress.call(undefined, {
+            files: event.newState,
+            target: event.target,
+            event: event
+        });
+    };
+
+    const onStatusChange = event => {
+        props.onFileStatusChange.call(undefined, {
+            files: event.newState,
+            target: event.target,
+            event: event
+        });
+    };
+
+    const handleDoneClick = event => {
+        props.onDoneBtnClick.call(undefined, {
+            files: event.newState,
+            target: event.target,
+            event: event
+        });
+    };
 
     return (
         <Toolbar className="k-filemanager-toolbar">
             <Button className="k-toolbar-first-visible">New Folder</Button>
             <Button onClick={handleUploadDialog}>Upload</Button>
-            { visible &&
+            { props.visible &&
                 <Dialog  
                     title={'Upload Files'}
                     className={'k-filemanager-upload-dialog'}
@@ -110,14 +159,18 @@ export const FileManagerToolbar = (props: any) => {
                     <Upload
                         batch={false}
                         multiple={true}
-                        defaultFiles={[]}
+                        files={props.files}
                         withCredentials={false}
+                        onAdd={onAdd}
+                        onRemove={onRemove}
+                        onProgress={onProgress}
+                        onStatusChange={onStatusChange}
                         saveUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/save'}
                         removeUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/remove'}
                         />
                     <DialogActionsBar layout={'end'}>
-                        <Button > Clear List</Button>
-                        <Button primary={true} > Done </Button>
+                        <Button onClick={handleClearList} > Clear List</Button>
+                        <Button primary={true} onClick={handleDoneClick}> Done </Button>
                     </DialogActionsBar>
                 </Dialog >
             }
