@@ -6,7 +6,8 @@ import { process, orderBy } from '@progress/kendo-data-query';
 import { getter } from '@progress/kendo-react-common';
 import { 
   getSelectedState,
-  getSelectedStateFromKeyDown } from '@progress/kendo-react-grid';
+  getSelectedStateFromKeyDown,
+} from '@progress/kendo-react-grid';
 
 import { FileManagerToolbar } from './components/FileManagerToolbar';
 import { FolderStructure } from './components/FolderStructure';
@@ -20,7 +21,8 @@ import {
   formatData,
   convertToTreeData,
   convertToGridData,
-  searchTreeItem
+  searchTreeItem,
+  getSortField
 } from './helpers/helperMethods';
 
 const splitterPanes = [
@@ -59,8 +61,6 @@ const App = () => {
   const [selectedTreeItem, setSelectedTreeItem] = React.useState(null);
 
   const [fileData, setFileData] = React.useState<null | number | Object>(null);
-  // const [sortField, setSortField] = React.useState<string>('name');
-  // const [sortType, setSortType] = React.useState<'asc' | 'desc' | undefined>('asc');
 
   const splitItems = [
     { text: 'Name' },
@@ -96,7 +96,6 @@ const App = () => {
       let newGridData = convertToGridData(curItem, intl);
       if (newGridData) {
         newGridData = orderBy(newGridData.map(item => {
-          // console.log('item', item);
           return ({
         ...item,
         [SELECTED_FIELD]: selected[idGetter(item)]
@@ -219,24 +218,33 @@ const App = () => {
     }
   }
 
-  // const handleSplitBtnItemClick = event => {
-  //   const newSortField = getSortField(event.sortType)
-  //   const newSortedGrid = inputGridData;
+  const handleSplitBtnItemClick = event => {
+    const newSortField = getSortField(event.sortType)
+    const newSortedGrid = inputGridData;
 
-  //   newSortedGrid.sort[0].field = newSortField;
-  //   setSortField(newSortField);
-  //   setInputGridData(newSortedGrid);
-  // }
+    newSortedGrid.sort[0].field = newSortField;
+    const newSort = [{
+      field: newSortField,
+      dir: sort[0].dir
+    }];
+    
+    setSort(newSort);
+    setInputGridData(newSortedGrid);
+  }
 
-  // const handleSortBtnSelection = event => {
-  //   const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
-  //   const newSortedGrid = inputGridData;
+  const handleSortBtnSelection = event => {
+    const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
+    const newSortedGrid = inputGridData;
 
-  //   newSortedGrid.sort[0].dir = newSortDir;
-  //   setSortType(newSortDir);
-  // sort
-  //   setInputGridData(newSortedGrid);
-  // }
+    newSortedGrid.sort[0].dir = newSortDir;
+    const newSort = [{
+      field: sort[0].field,
+      dir: newSortDir
+    }];
+
+    setSort(newSort);
+    setInputGridData(newSortedGrid);
+  }
 
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
@@ -247,8 +255,8 @@ const App = () => {
             onInputChange={handleInputChange}
             onSwitchChange={handleSwitchChange}
             onViewBtnSelection={handleViewBtnSelection}
-            // onSplitBtnItemClick={handleSplitBtnItemClick}
-            // onSortBtnSelection={handleSortBtnSelection}
+            onSplitBtnItemClick={handleSplitBtnItemClick}
+            onSortBtnSelection={handleSortBtnSelection}
             />
         </div>
       <div className="k-filemanager-content-container">

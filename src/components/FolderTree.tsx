@@ -27,8 +27,6 @@ export const FolderTree = (props: any) => {
         }
     }
 
-    // console.log('props inside the tree', props)
-
     return (
         <TreeView
             className="k-filemanager-treeview"

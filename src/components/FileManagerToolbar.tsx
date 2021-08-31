@@ -92,7 +92,7 @@ export const FileManagerToolbar = (props: any) => {
         });
     }
 
-    const handleToggleDialog = event => {
+    const handleUploadDialog = event => {
         console.log('toggle btn', event) 
         setVisible(!visible);
     }
@@ -100,12 +100,12 @@ export const FileManagerToolbar = (props: any) => {
     return (
         <Toolbar className="k-filemanager-toolbar">
             <Button className="k-toolbar-first-visible">New Folder</Button>
-            <Button onClick={handleToggleDialog}>Upload</Button>
+            <Button onClick={handleUploadDialog}>Upload</Button>
             { visible &&
                 <Dialog  
                     title={'Upload Files'}
                     className={'k-filemanager-upload-dialog'}
-                    onClose={handleToggleDialog}
+                    onClose={handleUploadDialog}
                     contentStyle={{ width: '530px' }}
                     >
                     <Upload
