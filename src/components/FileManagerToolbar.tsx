@@ -12,11 +12,12 @@ import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods
 import { GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
 
 export const FileManagerToolbar = (props: any) => {
+    const [dialogVisibility, setDialogVisibility] = React.useState<boolean>(false);
     const [viewBtnGroup, setViewBtnGroup] = React.useState<GridViewBtnGroup>({ gridView: true, listView: false });
     const [sortBtnGroup, setSortBtnGroup] = React.useState<SortingBtnGroup>({ sortAsc: true, sortDesc: false });
 
-    const handleInputChange = event => {
-        props.onInputChange.call(undefined, {
+    const handleSearchChange = event => {
+        props.onSearchChange.call(undefined, {
             inputValue: event.value,
             target: event.target,
             event: event
@@ -62,7 +63,8 @@ export const FileManagerToolbar = (props: any) => {
             const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'asc');
             setSortBtnGroup(newBtnGroupState);
 
-            props.onSortBtnSelection.call(undefined, {
+            props.onSortChange.call(undefined, {
+                direction: 'asc',
                 sortValue: newBtnGroupState,
                 target: event.target,
                 event: event
@@ -75,7 +77,8 @@ export const FileManagerToolbar = (props: any) => {
             const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'desc');
             setSortBtnGroup(newBtnGroupState);
 
-            props.onSortBtnSelection.call(undefined, {
+            props.onSortChange.call(undefined, {
+                direction: 'desc',
                 sortValue: newBtnGroupState,
                 target: event.target,
                 event: event
@@ -91,54 +94,34 @@ export const FileManagerToolbar = (props: any) => {
         });
     };
 
-    const handleUploadDialog = event => {
-        props.onUploadDialog.call(undefined, {
+    const handleDialogVisibility = event => {
+        setDialogVisibility(!dialogVisibility);
+        if (!dialogVisibility) {
+            props.onUploadDone.call(undefined, {
             target: event.target,
             event: event
         }); 
+        }
     };
 
-    const handleClearList = event => {
+    const handleFileChange = event => {
+        props.onFileChange.call(undefined, {
+            files: event.newState,
+            target: event.target,
+            event: event
+        });
+    };
+
+    const handleUploadClearList = event => {
         props.onClearFileList.call(undefined, {
             target: event.target,
             event: event
         }); 
     };
 
-    const onAdd = event => {
-        props.onFileAdd.call(undefined, {
-            files: event.newState,
-            target: event.target,
-            event: event
-        });
-    };
-    
-    const onRemove = event => {
-        props.onFileAdd.call(undefined, {
-            files: event.newState,
-            target: event.target,
-            event: event
-        });
-    };
-
-    const onProgress = event => {
-        props.onFileProgress.call(undefined, {
-            files: event.newState,
-            target: event.target,
-            event: event
-        });
-    };
-
-    const onStatusChange = event => {
-        props.onFileStatusChange.call(undefined, {
-            files: event.newState,
-            target: event.target,
-            event: event
-        });
-    };
-
-    const handleDoneClick = event => {
-        props.onDoneBtnClick.call(undefined, {
+    const handleUploadDone = event => {
+        setDialogVisibility(!dialogVisibility);
+        props.onUploadDone.call(undefined, {
             files: event.newState,
             target: event.target,
             event: event
@@ -148,12 +131,12 @@ export const FileManagerToolbar = (props: any) => {
     return (
         <Toolbar className="k-filemanager-toolbar">
             <Button className="k-toolbar-first-visible">New Folder</Button>
-            <Button onClick={handleUploadDialog}>Upload</Button>
-            { props.visible &&
+            <Button onClick={handleDialogVisibility}>Upload</Button>
+            { dialogVisibility &&
                 <Dialog  
                     title={'Upload Files'}
                     className={'k-filemanager-upload-dialog'}
-                    onClose={handleUploadDialog}
+                    onClose={handleDialogVisibility}
                     contentStyle={{ width: '530px' }}
                     >
                     <Upload
@@ -161,16 +144,16 @@ export const FileManagerToolbar = (props: any) => {
                         multiple={true}
                         files={props.files}
                         withCredentials={false}
-                        onAdd={onAdd}
-                        onRemove={onRemove}
-                        onProgress={onProgress}
-                        onStatusChange={onStatusChange}
+                        onAdd={handleFileChange}
+                        onRemove={handleFileChange}
+                        onProgress={handleFileChange}
+                        onStatusChange={handleFileChange}
                         saveUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/save'}
                         removeUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/remove'}
                         />
                     <DialogActionsBar layout={'end'}>
-                        <Button onClick={handleClearList} > Clear List</Button>
-                        <Button primary={true} onClick={handleDoneClick}> Done </Button>
+                        <Button onClick={handleUploadClearList} > Clear List</Button>
+                        <Button primary={true} onClick={handleUploadDone}> Done </Button>
                     </DialogActionsBar>
                 </Dialog >
             }
@@ -230,7 +213,7 @@ export const FileManagerToolbar = (props: any) => {
                 </Switch>
             </div>
             <div className="k-filemanager-search-tool k-textbox k-toolbar-last-visible" >
-                <Input className="k-input" placeholder="Search" onChange={handleInputChange}/>
+                <Input className="k-input" placeholder="Search" onChange={handleSearchChange}/>
                 <span className="k-input-icon">
                     <span className="k-icon k-i-search"></span>
                 </span>

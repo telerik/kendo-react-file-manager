@@ -14,14 +14,28 @@ export interface TreeDataModel {
     items?: DataModel[] | []
 };
 
+export interface IconType {
+    icon?: string;
+    type?: string;
+};
 export interface GridDataModel {
     name: string,
     dateCreated?: Date,
     size?: number,
-    icon?: { icon?: string; type?: string },
+    icon?: IconType,
     items?: DataModel[]
 };
 
+export interface PanesModel {
+    size?: string,
+    min?: string,
+    collapsible?: boolean
+};
+
+export interface SplitBtnItems {
+    text?: string,
+    value?: string
+}
 export interface GridViewBtnGroup {
     gridView: boolean,
     listView: boolean

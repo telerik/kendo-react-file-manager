@@ -124,19 +124,3 @@ export const toggleSortBtnGroup = (btnGroupState, curState: string) => {
   return { sortAsc: false, sortDesc: false };
 };
 
-export const getSortField = (typeString: string) => {
-  switch(typeString) {
-    case 'Name':
-      return 'name';
-    case 'Type':
-      return 'type';
-    case 'File Size':
-      return 'size';
-    case 'Date Created':
-      return 'dateCreated';
-    case 'Date Modified':
-      return 'dateModified';
-    default:
-      return '';
-  }
-};

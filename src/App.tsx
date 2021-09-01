@@ -2,27 +2,29 @@ import * as React from 'react';
 
 import { Splitter } from '@progress/kendo-react-layout';
 import { useInternationalization } from '@progress/kendo-react-intl';
-import { process, orderBy } from '@progress/kendo-data-query';
+import { process, orderBy, SortDescriptor, State } from '@progress/kendo-data-query';
 import { getter } from '@progress/kendo-react-common';
-import { getSelectedState, getSelectedStateFromKeyDown, } from '@progress/kendo-react-grid';
+import { getSelectedState, getSelectedStateFromKeyDown } from '@progress/kendo-react-grid';
+import { UploadFileInfo } from '@progress/kendo-react-upload';
 
 import { FileManagerToolbar } from './components/FileManagerToolbar';
-import { FolderStructure } from './components/FolderStructure';
+import { GridView } from './components/GridView';
+import { ListView } from './components/ListView';
 import { FileInformation } from './components/FileInformation';
 import { FolderTree } from './components/FolderTree';
 import { Breadcrumb } from './components/Breadcrumb';
 
 import { initialData } from './data/data';
-import { DataModel, GridDataModel } from './interfaces/FileManagerModels';
+import { DataModel, GridDataModel, PanesModel, SplitBtnItems } from './interfaces/FileManagerModels';
 import {
   formatData,
   convertToTreeData,
   convertToGridData,
-  searchTreeItem,
-  getSortField
+  searchTreeItem
 } from './helpers/helperMethods';
+// import { SplitButtonItem } from '@progress/kendo-react-buttons';
 
-const splitterPanes = [
+const splitterPanes: PanesModel[] = [
   {
     size: "20%",
     min: "20px",
@@ -36,7 +38,7 @@ const splitterPanes = [
   },
 ];
 
-const initialSort = [{
+const initialSort: SortDescriptor[] = [{
   field: 'Name',
   dir: 'asc'
 }];
@@ -49,31 +51,29 @@ const App = () => {
   const intl = useInternationalization();
 
   const [data, setData] = React.useState<DataModel[]>(formatData(initialData, intl));
-  const [panes, setPanes] = React.useState(splitterPanes);
+  const [panes, setPanes] = React.useState<PanesModel[]>(splitterPanes);
 
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
-  const [sort, setSort] = React.useState<any>(initialSort);
+  
   const [selected, setSelected] = React.useState({});
+  // TODO: refactor the usage
   const [selectedTreeItem, setSelectedTreeItem] = React.useState(null);
 
-  const [fileData, setFileData] = React.useState<null | number | Object>(null);
-  const [files, setFiles] = React.useState([]);
-  const [dialogVisibility, setDialogVisibility] = React.useState<boolean>(false);
+  const [fileDetailsData, setFileDetailsData] = React.useState<null | number | Object>(null);
+  const [files, setFiles] = React.useState<UploadFileInfo[]>([]);
 
-  const splitItems = [
-    { text: 'Name' },
-    { text: 'Type' },
-    { text: 'File Size'},
-    { text: 'Date Created'},
-    { text: 'Date Modified'}
+  const splitBtnItems: SplitBtnItems[] = [
+    { text: 'Name', value: 'name' },
+    { text: 'Type', value: 'type' },
+    { text: 'File Size', value: 'size'},
+    { text: 'Date Created', value: 'dateCreated'},
+    { text: 'Date Modified', value: 'dateModified'}
   ];
 
   const initialLogic: "and" | "or" = "and";
  
-  const [inputGridData, setInputGridData] = React.useState({
-    skip: 0,
-    take: 10,
-    sort: sort,
+  const [inputGridData, setInputGridData] = React.useState<State>({
+    sort: initialSort,
     filter: {
       logic: initialLogic,
       filters: [
@@ -82,7 +82,7 @@ const App = () => {
     }
   });
 
-  const [gridView, setGridView] = React.useState<string>("grid");
+  const [contentView, setContentView] = React.useState<string>("grid");
 
   const treeData = React.useMemo(
     () => convertToTreeData(data),
@@ -98,27 +98,26 @@ const App = () => {
         ...item,
         [SELECTED_FIELD]: selected[idGetter(item)]
         })}
-        ), sort)
+        ), inputGridData.sort)
 
-        // update the grid state
         setGridData(newGridData);
       }
     },
-    [intl, selected, sort]
+    [intl, selected, inputGridData]
   );
   
-  const updateFileData = React.useCallback(
+  const updateFileDetailsData = React.useCallback(
     (selection) => {
       const numberOfSelectedItems = Object.keys(selection).length;
 
       if (numberOfSelectedItems > 1) {
-        setFileData(Object.keys(selection).length);
+        setFileDetailsData(Object.keys(selection).length);
       } else if (numberOfSelectedItems === 1) {
         const curSelectedItem = { name: Object.keys(selection)[0] };
         const newFileData = searchTreeItem(data, curSelectedItem);
-        setFileData(newFileData)
+        setFileDetailsData(newFileData)
       } else {
-        setFileData(null);
+        setFileDetailsData(null);
       }
     },
     [data]
@@ -142,11 +141,10 @@ const App = () => {
     if (event) {
       const newSelectedItem = searchTreeItem(data, event.item);
 
-      // sets the tree selection - newSelectedItem
       expandItem(event);
       setSelectedTreeItem(newSelectedItem);
       updateGridData(newSelectedItem);
-      setFileData(event.item);
+      setFileDetailsData(event.item);
     }
   };
 
@@ -157,32 +155,42 @@ const App = () => {
   };
 
   const handleSelectionChange = event => {
-    const selectedState = getSelectedState({
-      event: event.event,
-      selectedState: selected,
-      dataItemKey: DATA_ITEM_KEY
-    });
+    let selectedState;
+    if (event.pressedKey) {
+      selectedState = getSelectedStateFromKeyDown({
+        event: event.event,
+        selectedState: selected,
+        dataItemKey: DATA_ITEM_KEY
+      });
+        
+    } else {
+      selectedState = getSelectedState({
+        event: event.event,
+        selectedState: selected,
+        dataItemKey: DATA_ITEM_KEY
+      });
+      
+    }
     
     setSelected(selectedState);
-    updateFileData(selectedState);
+    updateFileDetailsData(selectedState);
   };
 
-  const handelGridKeyDown = event => {
-    const selectedState = getSelectedStateFromKeyDown({
-      event: event.event,
-      selectedState: selected,
-      dataItemKey: DATA_ITEM_KEY
-    });
-    setSelected(selectedState);
-  };
-
-  const handleGridSortChange = event => {
+  const handleSortChange = event => {
     if (event.sort) {
-      setSort(event.sort);
+      setInputGridData(
+        {
+          sort: event.sort,
+          filter: {
+            logic: initialLogic,
+            filters: inputGridData.filter.filters
+          }
+        }  
+      );
     }
   };
   
-  const handleInputChange = event => {
+  const handleSearchChange = event => {
     setInputGridData({
         ...inputGridData,
         filter: {
@@ -207,54 +215,49 @@ const App = () => {
 
   const handleViewBtnSelection = event => {
     if (event.viewValue.gridView) {
-      setGridView('grid');
+      setContentView('grid');
     }
     if (event.viewValue.listView) {
-      setGridView('list');
+      setContentView('list');
     }
   };
 
-  const handleSplitBtnItemClick = event => {
-    const newSortField = getSortField(event.sortType)
-    const newSortedGrid = inputGridData;
+  // const handleSplitBtnItemClick = event => {
+  //   const newSortField = getSortField(event.sortType)
+  //   const newSortedGrid = inputGridData;
 
-    newSortedGrid.sort[0].field = newSortField;
-    const newSort = [{
-      field: newSortField,
-      dir: sort[0].dir
-    }];
+  //   newSortedGrid.sort[0].field = newSortField;
     
-    setSort(newSort);
-    setInputGridData(newSortedGrid);
-  };
+  //   setInputGridData(
+  //     {
+  //       sort: [{
+  //         field: newSortField,
+  //         dir: inputGridData.sort[0].dir
+  //       }],
+  //       filter: {
+  //         logic: initialLogic,
+  //         filters: inputGridData.filter.filters
+  //       }
+  //     }  
+  //   );
+  //   setInputGridData(newSortedGrid);
+  // };
 
-  const handleSortBtnSelection = event => {
-    const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
-    const newSortedGrid = inputGridData;
+  // const handleSortBtnSelection = event => {
+  //   const newSortDir = event.sortValue.sortAsc ? 'asc' : 'desc';
+  //   const newSortedGrid = inputGridData;
 
-    newSortedGrid.sort[0].dir = newSortDir;
-    const newSort = [{
-      field: sort[0].field,
-      dir: newSortDir
-    }];
+  //   newSortedGrid.sort[0].dir = newSortDir;
+  //   const newSort = [{
+  //     field: sort[0].field,
+  //     dir: newSortDir
+  //   }];
 
-    setSort(newSort);
-    setInputGridData(newSortedGrid);
-  };
+  //   setSort(newSort);
+  //   setInputGridData(newSortedGrid);
+  // };
 
-  const handleFileAdd = event => {
-    setFiles(event.files);
-  };
-
-  const handleFileRemove = event => {
-    setFiles(event.files);
-  };
-
-  const handleFileProgress = event => {
-    setFiles(event.files);
-  };
-
-  const handleFileStatusChange = event => {
+  const handleFileChange = event => {
     setFiles(event.files);
   };
 
@@ -264,13 +267,8 @@ const App = () => {
     }
   };
 
-  const handleUploadDialog = event => {
-    if (event) {
-      setDialogVisibility(!dialogVisibility);
-    }
-  };
 
-  const handleDoneBtnClick = event => {
+  const handleUploadDone = event => {
     console.log('done event', event);
     console.log('files', files);
     console.log('grid data', gridData);
@@ -278,8 +276,6 @@ const App = () => {
     let newElement = {};
     // map through the elements and cast the to the DataGridModel -> add to grid data
     // newElement['name'] = files.name;
-
-    setDialogVisibility(!dialogVisibility);
   };
 
   return (
@@ -287,22 +283,16 @@ const App = () => {
         <div className="k-filemanager-header">
           <FileManagerToolbar 
             data={data}
-            splitItems={splitItems}
+            splitItems={splitBtnItems}
             files={files}
-            visible={dialogVisibility}
-            onInputChange={handleInputChange}
+            onSearchChange={handleSearchChange}
             onSwitchChange={handleSwitchChange}
             onViewBtnSelection={handleViewBtnSelection}
-            onSplitBtnItemClick={handleSplitBtnItemClick}
-            onSortBtnSelection={handleSortBtnSelection}
-            onUploadDialog={handleUploadDialog}
+            onSortChange={handleSortChange}
 
-            onFileAdd={handleFileAdd}
-            onFileRemove={handleFileRemove}
-            onFileProgress={handleFileProgress}
-            onFileStatusChange={handleFileStatusChange}
+            onFileChange={handleFileChange}
             onClearFileList={handleClearFileList}
-            onDoneBtnClick={handleDoneBtnClick}
+            onUploadDone={handleUploadDone}
             />
         </div>
       <div className="k-filemanager-content-container">
@@ -317,17 +307,20 @@ const App = () => {
             />
           <div className="k-filemanager-content">
             <Breadcrumb data={data}/>
-            <FolderStructure 
-              view={gridView}
-              sort={sort}
-              selected={SELECTED_FIELD}
-              data={gridData ? process(gridData.slice(0), inputGridData) : null}
-              onSelectionChange={handleSelectionChange}
-              onSortChange={handleGridSortChange}
-              onGridKeyDown={handelGridKeyDown}
-              />
+              {contentView === 'grid' 
+                ? <GridView
+                    sort={inputGridData.sort}
+                    selected={SELECTED_FIELD}
+                    data={gridData ? process(gridData.slice(0), inputGridData) : null}
+                    onSelectionChange={handleSelectionChange}
+                    onSortChange={handleSortChange}
+                    />
+                : <ListView
+                    data={gridData ? process(gridData.slice(0), inputGridData) : null}
+                    />
+            }
           </div>
-          <FileInformation data={fileData} />
+          <FileInformation data={fileDetailsData} />
         </Splitter>
       </div>
     </div>
