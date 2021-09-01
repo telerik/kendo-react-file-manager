@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { Splitter } from '@progress/kendo-react-layout';
+import { Splitter, SplitterOnChangeEvent } from '@progress/kendo-react-layout';
 import { useInternationalization } from '@progress/kendo-react-intl';
 import { process, orderBy, SortDescriptor, State } from '@progress/kendo-data-query';
 import { getter } from '@progress/kendo-react-common';
-import { getSelectedState, getSelectedStateFromKeyDown } from '@progress/kendo-react-grid';
+import { getSelectedState, getSelectedStateFromKeyDown, GridSortChangeEvent } from '@progress/kendo-react-grid';
 import { UploadFileInfo } from '@progress/kendo-react-upload';
 
 import { FileManagerToolbar } from './components/FileManagerToolbar';
@@ -15,13 +15,15 @@ import { FolderTree } from './components/FolderTree';
 import { Breadcrumb } from './components/Breadcrumb';
 
 import { initialData } from './data/data';
-import { DataModel, GridDataModel, PanesModel, SplitBtnItems } from './interfaces/FileManagerModels';
+import { DataModel, GridDataModel, PanesModel, SplitBtnItems, SelectedItemType, TreeDataModel, SelectionChangeEvent, ButtonClickEvent } from './interfaces/FileManagerModels';
 import {
   formatData,
   convertToTreeData,
   convertToGridData,
   searchTreeItem
 } from './helpers/helperMethods';
+import { TreeViewItemClickEvent } from '@progress/kendo-react-treeview';
+import { InputChangeEvent, SwitchChangeEvent } from '@progress/kendo-react-inputs';
 // import { SplitButtonItem } from '@progress/kendo-react-buttons';
 
 const splitterPanes: PanesModel[] = [
@@ -55,9 +57,9 @@ const App = () => {
 
   const [gridData, setGridData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
   
-  const [selected, setSelected] = React.useState({});
+  const [selected, setSelected] = React.useState<SelectedItemType>({});
   // TODO: refactor the usage
-  const [selectedTreeItem, setSelectedTreeItem] = React.useState(null);
+  const [selectedTreeItem, setSelectedTreeItem] = React.useState<TreeDataModel | null>(null);
 
   const [fileDetailsData, setFileDetailsData] = React.useState<null | number | Object>(null);
   const [files, setFiles] = React.useState<UploadFileInfo[]>([]);
@@ -91,8 +93,9 @@ const App = () => {
   
   const updateGridData = React.useCallback(
     (curItem?: DataModel) => {
-      let newGridData = convertToGridData(curItem, intl);
-      if (newGridData) {
+      let newGridData: GridDataModel[] = convertToGridData(curItem, intl);
+
+      if (newGridData && inputGridData.sort) {
         newGridData = orderBy(newGridData.map(item => {
           return ({
         ...item,
@@ -107,14 +110,14 @@ const App = () => {
   );
   
   const updateFileDetailsData = React.useCallback(
-    (selection) => {
-      const numberOfSelectedItems = Object.keys(selection).length;
+    (selection: SelectedItemType) => {
+      const numberOfSelectedItems: number = Object.keys(selection).length;
 
       if (numberOfSelectedItems > 1) {
         setFileDetailsData(Object.keys(selection).length);
       } else if (numberOfSelectedItems === 1) {
         const curSelectedItem = { name: Object.keys(selection)[0] };
-        const newFileData = searchTreeItem(data, curSelectedItem);
+        const newFileData: TreeDataModel = searchTreeItem(data, curSelectedItem);
         setFileDetailsData(newFileData)
       } else {
         setFileDetailsData(null);
@@ -123,10 +126,10 @@ const App = () => {
     [data]
   );
 
-  const expandItem = event => {
+  const expandItem = (event: TreeViewItemClickEvent) => {
     if (event.item.items.length) {
-      const itemIndex = data.findIndex(item => item.name === event.item.name);
-      const newData = data.slice();
+      const itemIndex: number = data.findIndex(item => item.name === event.item.name);
+      const newData: DataModel[] = data.slice();
 
       event.item.expanded = true;
 
@@ -137,25 +140,22 @@ const App = () => {
     }
   };
 
-  const handleTreeItemClick = event => {
-    if (event) {
-      const newSelectedItem = searchTreeItem(data, event.item);
+  const handleTreeItemClick = (event: TreeViewItemClickEvent) => {
+    const newSelectedItem: TreeDataModel = searchTreeItem(data, event.item);
 
-      expandItem(event);
-      setSelectedTreeItem(newSelectedItem);
-      updateGridData(newSelectedItem);
-      setFileDetailsData(event.item);
-    }
+    expandItem(event);
+    setSelectedTreeItem(newSelectedItem);
+    updateGridData(newSelectedItem);
+    setFileDetailsData(event.item);
   };
 
-  const handleSplitterChange = (event) => {
-    if (event) {
-      setPanes(event.newState);
-    }
+  const handleSplitterChange = (event: SplitterOnChangeEvent) => {
+    setPanes(event.newState);
   };
 
-  const handleSelectionChange = event => {
-    let selectedState;
+  const handleSelectionChange = (event: SelectionChangeEvent) => {
+    let selectedState: SelectedItemType;
+
     if (event.pressedKey) {
       selectedState = getSelectedStateFromKeyDown({
         event: event.event,
@@ -171,13 +171,12 @@ const App = () => {
       });
       
     }
-    
     setSelected(selectedState);
     updateFileDetailsData(selectedState);
   };
 
-  const handleSortChange = event => {
-    if (event.sort) {
+  const handleSortChange = (event: GridSortChangeEvent) => {
+    if (event.sort && inputGridData.filter) {
       setInputGridData(
         {
           sort: event.sort,
@@ -190,21 +189,21 @@ const App = () => {
     }
   };
   
-  const handleSearchChange = event => {
+  const handleSearchChange = (event: InputChangeEvent) => {
     setInputGridData({
         ...inputGridData,
         filter: {
           logic: initialLogic,
           filters: [
-            { field: 'name', operator: 'contains', value: event.inputValue }
+            { field: 'name', operator: 'contains', value: event.value }
           ]
         }
     });
   };
 
-  const handleSwitchChange = event => {
-    const newPanes = panes.slice(0)
-    if (event.switchValue) {
+  const handleSwitchChange = (event: SwitchChangeEvent) => {
+    const newPanes: PanesModel[] = panes.slice(0)
+    if (event.value) {
       newPanes[2].size = '30%';
       setPanes(newPanes)
     } else {
@@ -213,11 +212,11 @@ const App = () => {
     }
   };
 
-  const handleViewBtnSelection = event => {
-    if (event.viewValue.gridView) {
+  const handleViewChange = (event: ButtonClickEvent) => {
+    if (event.viewState.gridView) {
       setContentView('grid');
     }
-    if (event.viewValue.listView) {
+    if (event.viewState.listView) {
       setContentView('list');
     }
   };
@@ -287,7 +286,7 @@ const App = () => {
             files={files}
             onSearchChange={handleSearchChange}
             onSwitchChange={handleSwitchChange}
-            onViewBtnSelection={handleViewBtnSelection}
+            onViewChange={handleViewChange}
             onSortChange={handleSortChange}
 
             onFileChange={handleFileChange}

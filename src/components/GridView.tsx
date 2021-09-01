@@ -1,29 +1,29 @@
 import { 
   Grid,
   GridColumn as Column,
+  GridKeyDownEvent,
+  GridSelectionChangeEvent,
+  GridSortChangeEvent
 } from '@progress/kendo-react-grid';
 
-export const GridView = (props: any) => {
-  const handleOnSortChange = event => {
+export const GridView = (props) => {
+  const handleOnSortChange = (event: GridSortChangeEvent) => {
     props.onSortChange.call(undefined, {
       sort: event.sort,
-      event: event,
-      target: event.target
+      event: event
     });
   }
 
-  const handleOnSelectionChange = event => {
+  const handleOnSelectionChange = (event: GridSelectionChangeEvent) => {
     props.onSelectionChange.call(undefined, {
-      event: event,
-      target: event.target
+      event: event
     });
   };
 
-  const handleOnKeyDown = event => {
+  const handleOnKeyDown = (event: GridKeyDownEvent) => {
     props.onSelectionChange.call(undefined, {
       pressedKey: true,
-      event: event,
-      target: event.target
+      event: event
     });
   };
 

@@ -3,62 +3,57 @@ import {
     Toolbar,
     Button,
     ButtonGroup,
-    SplitButton
+    SplitButton,
+    SplitButtonClickEvent
 } from '@progress/kendo-react-buttons';
-import { Switch, Input } from "@progress/kendo-react-inputs";
+import { Switch, Input, InputChangeEvent, SwitchChangeEvent } from "@progress/kendo-react-inputs";
 import { Dialog, DialogActionsBar } from '@progress/kendo-react-dialogs';
 import { Upload } from '@progress/kendo-react-upload';
 import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods';
-import { GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
+import { ButtonClickEvent, GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
 
 export const FileManagerToolbar = (props: any) => {
     const [dialogVisibility, setDialogVisibility] = React.useState<boolean>(false);
     const [viewBtnGroup, setViewBtnGroup] = React.useState<GridViewBtnGroup>({ gridView: true, listView: false });
     const [sortBtnGroup, setSortBtnGroup] = React.useState<SortingBtnGroup>({ sortAsc: true, sortDesc: false });
 
-    const handleSearchChange = event => {
+    const handleSearchChange = (event: InputChangeEvent) => {
         props.onSearchChange.call(undefined, {
-            inputValue: event.value,
-            target: event.target,
             event: event
         });
     };
 
-    const handleSwitchChange = event => {
+    const handleSwitchChange = (event: SwitchChangeEvent) => {
         props.onSwitchChange.call(undefined, {
-            switchValue: event.value,
-            target: event.target,
             event: event
         });
     };
 
-    const handleGridViewBtnClick = event => {
+    const handleGridViewChange = (event: ButtonClickEvent) => {
         if (event) {
             const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup, 'grid');
             setViewBtnGroup(newBtnGroupState);
 
-            props.onViewBtnSelection.call(undefined, {
+            props.onViewChange.call(undefined, {
                 viewValue: newBtnGroupState,
-                target: event.target,
                 event: event
             });
         }
     };
 
-    const handleListViewBtnClick = event => {
+    const handleListViewChange = (event: ButtonClickEvent) => {
         if (event) {
             const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup, 'list');
             setViewBtnGroup(newBtnGroupState);
 
-            props.onViewBtnSelection.call(undefined, {
+            props.onViewChange.call(undefined, {
                 viewValue: newBtnGroupState,
-                target: event.target,
                 event: event
             });
         }
     };
 
-    const handleAscBtnClick = event => {
+    const handleAscBtnClick = (event: ButtonClickEvent) => {
         if (event) {
             const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'asc');
             setSortBtnGroup(newBtnGroupState);
@@ -66,13 +61,12 @@ export const FileManagerToolbar = (props: any) => {
             props.onSortChange.call(undefined, {
                 direction: 'asc',
                 sortValue: newBtnGroupState,
-                target: event.target,
                 event: event
             });
         } 
     };
 
-    const handleDescSortBtnClick = event => {
+    const handleDescSortBtnClick = (event: ButtonClickEvent) => {
         if (event) {
             const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'desc');
             setSortBtnGroup(newBtnGroupState);
@@ -80,25 +74,22 @@ export const FileManagerToolbar = (props: any) => {
             props.onSortChange.call(undefined, {
                 direction: 'desc',
                 sortValue: newBtnGroupState,
-                target: event.target,
                 event: event
             });
         } 
     };
 
-    const handleItemClick = event => {
-        props.onSplitBtnItemClick.call(undefined, {
-            sortType: event.item.text,
-            target: event.target,
-            event: event
-        });
-    };
+    // const handleItemClick = (event: SplitButtonClickEvent) => {
+    //     props.onSplitBtnItemClick.call(undefined, {
+    //         sortType: event.item.text,
+    //         event: event
+    //     });
+    // };
 
     const handleDialogVisibility = event => {
         setDialogVisibility(!dialogVisibility);
         if (!dialogVisibility) {
             props.onUploadDone.call(undefined, {
-            target: event.target,
             event: event
         }); 
         }
@@ -107,14 +98,12 @@ export const FileManagerToolbar = (props: any) => {
     const handleFileChange = event => {
         props.onFileChange.call(undefined, {
             files: event.newState,
-            target: event.target,
             event: event
         });
     };
 
     const handleUploadClearList = event => {
         props.onClearFileList.call(undefined, {
-            target: event.target,
             event: event
         }); 
     };
@@ -123,7 +112,6 @@ export const FileManagerToolbar = (props: any) => {
         setDialogVisibility(!dialogVisibility);
         props.onUploadDone.call(undefined, {
             files: event.newState,
-            target: event.target,
             event: event
         });
     };
@@ -187,7 +175,7 @@ export const FileManagerToolbar = (props: any) => {
                     className={"k-toggle-button k-button-icon k-group-start"}
                     togglable={true}
                     selected={viewBtnGroup.gridView}
-                    onClick={handleGridViewBtnClick}
+                    onClick={handleGridViewChange}
                     >
                     <span className="k-icon k-i-grid-layout"></span>
                 </Button>
@@ -195,7 +183,7 @@ export const FileManagerToolbar = (props: any) => {
                     className={"k-toggle-button k-button-icon k-group-end"}
                     togglable={true}
                     selected={viewBtnGroup.listView}
-                    onClick={handleListViewBtnClick}
+                    onClick={handleListViewChange}
                     >
                     <span className="k-icon k-i-grid"></span>
                 </Button>
