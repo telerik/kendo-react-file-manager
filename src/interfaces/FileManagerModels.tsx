@@ -1,5 +1,6 @@
+import { SplitButtonItemClickEvent } from "@progress/kendo-react-buttons";
 import { TableKeyDownEvent, TableSelectionChangeEvent } from "@progress/kendo-react-data-tools";
-import { GridRowClickEvent, GridSelectionChangeEvent } from "@progress/kendo-react-grid";
+import { GridRowClickEvent, GridSelectionChangeEvent, GridSortChangeEvent } from "@progress/kendo-react-grid";
 import { UploadFileInfo, UploadOnAddEvent } from "@progress/kendo-react-upload";
 import { MouseEventHandler } from "react";
 import { ChangeEvent } from "react";
@@ -38,6 +39,12 @@ export interface PanesModel {
     collapsible?: boolean;
 };
 
+export interface BreadcrumbDataModel {
+    id: string;
+    text?: string;
+    icon?: React.ReactNode;
+    iconClass?: string;
+}
 export interface SplitBtnItems {
     text?: string;
     value?: string;
@@ -67,8 +74,14 @@ export interface UploadAddEvent extends UploadOnAddEvent {
 };
 
 export interface ViewChangeEvent extends React.MouseEvent<HTMLButtonElement, MouseEvent> {
-    viewState: {
+    viewValue: {
         gridView?: string;
         listView?: string;
-    }
-}
+    };
+};
+
+export interface SortChangeEvent extends GridSortChangeEvent {
+    event?: SplitButtonItemClickEvent;
+    direction?: 'asc' | 'desc';
+    item?: any;
+};

@@ -8,7 +8,7 @@ import {
 } from '@progress/kendo-react-buttons';
 import { Switch, Input, InputChangeEvent, SwitchChangeEvent } from "@progress/kendo-react-inputs";
 import { Dialog, DialogActionsBar } from '@progress/kendo-react-dialogs';
-import { Upload, UploadOnAddEvent } from '@progress/kendo-react-upload';
+import { Upload } from '@progress/kendo-react-upload';
 import { BaseEvent } from '@progress/kendo-react-common';
 import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods';
 import { GridViewBtnGroup, SortingBtnGroup, UploadAddEvent } from '../interfaces/FileManagerModels';

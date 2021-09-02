@@ -15,7 +15,7 @@
     "@progress/kendo-react-inputs": "^4.8.0",
     "@progress/kendo-react-intl": "^4.8.0",
     "@progress/kendo-react-labels": "^4.8.0",
-    "@progress/kendo-react-layout": "^4.8.0",
+    "@progress/kendo-react-layout": "^4.9.0-dev.202109020831",
     "@progress/kendo-react-progressbars": "^4.8.0",
     "@progress/kendo-react-treeview": "^4.8.0",
     "@progress/kendo-react-upload": "^4.8.0",
