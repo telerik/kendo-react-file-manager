@@ -9,7 +9,7 @@ export const initialData: DataModel[] = [
     items: []
   },{
     name: "Documents",
-    size: 10,
+    size: 100000,
     dateCreated: new Date(),
     dateModified: new Date(),
     items: [
@@ -21,7 +21,7 @@ export const initialData: DataModel[] = [
       },
       {
         name: "shared",
-        size: 20,
+        size: 202665,
         dateCreated: new Date(),
         dateModified: null,
         items: [

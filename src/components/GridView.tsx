@@ -1,10 +1,29 @@
 import { 
   Grid,
+  GridCellProps,
   GridColumn as Column,
   GridKeyDownEvent,
   GridSelectionChangeEvent,
-  GridSortChangeEvent
+  GridSortChangeEvent,
+  GRID_COL_INDEX_ATTRIBUTE
 } from '@progress/kendo-react-grid';
+import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
+import { formatBytes } from '../helpers/helperMethods';
+
+const SizeCell = (props: GridCellProps) => {
+  const field = props.field || "";
+  const value = props.dataItem[field];
+  const navigationAttributes = useTableKeyboardNavigation(props.id);
+
+  return (
+    <td
+      {...{ [GRID_COL_INDEX_ATTRIBUTE]: props.columnIndex }}
+      {...navigationAttributes}
+    >
+      {value === null ? "" : formatBytes(value)}
+    </td>
+  );
+};
 
 export const GridView = (props) => {
   const handleOnSortChange = (event: GridSortChangeEvent) => {
@@ -42,7 +61,7 @@ export const GridView = (props) => {
       >
       <Column field="name" title="Name" />
       <Column field="dateCreated" title="Date Created" />
-      <Column field="size" title="File Size" />
+      <Column field="size" title="Size" cell={SizeCell} />
     </Grid>
   );
 }

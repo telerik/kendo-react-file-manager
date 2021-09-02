@@ -1,11 +1,13 @@
 import { useInternationalization } from '@progress/kendo-react-intl';
-import { convertDateFormat, convertExtensionToIcon } from '../helpers/helperMethods';
+import { convertDateFormat, convertExtensionToIcon, formatBytes } from '../helpers/helperMethods';
 import { classNames } from '@progress/kendo-react-common';
+import { DataModel, IconType } from '../interfaces/FileManagerModels';
 
-export const FileInformation = (props: any) => {
-    return (props.data
-        ? typeof props.data === 'number' ? MultipleSelectionRendering(props.data) : FileSelectionRendering(props.data)
-        : NoDataRendering());
+export const FileInformation = (props) => {
+    return (
+        props.data
+            ? typeof props.data === 'number' ? MultipleSelectionRendering(props.data) : FileSelectionRendering(props.data)
+            : NoDataRendering());
 }
 
 const NoDataRendering = () => {
@@ -19,25 +21,25 @@ const NoDataRendering = () => {
     )
 }
 
-const FileSelectionRendering = data => {
+const FileSelectionRendering = (data: DataModel) => {
     const intl = useInternationalization();
-    const dateCreated = convertDateFormat(data.dateCreated, intl).toString();
-    const dateModified = convertDateFormat(data.dateModified, intl).toString();
-    const iconObject = convertExtensionToIcon(data.name);
+    const dateCreated: Date = convertDateFormat(data.dateCreated ? data.dateCreated : null, intl).toString();
+    const dateModified: Date = convertDateFormat(data.dateModified ? data.dateModified : null, intl).toString();
+    const iconObject: IconType | null = convertExtensionToIcon(data.name ? data.name : null);
 
     return (
         <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
             <div className="k-file-info">
                 <span className="k-file-preview">
-                    <span className={classNames("k-file-icon k-icon", iconObject.icon)}></span>
+                    <span className={classNames("k-file-icon k-icon", iconObject?.icon ? iconObject.icon : '')}></span>
                 </span>
                 <span className="k-file-name k-single-file-selected">{data.name}</span>
                 <dl className="k-file-meta">
                     <dt className="k-file-meta-label">Type:  </dt>
-                    <dd className= {"k-file-meta-value k-file-type"}> {iconObject.type}</dd>
+                    <dd className= {"k-file-meta-value k-file-type"}> {iconObject?.type ? iconObject.type : ''}</dd>
                     <dd className="k-line-break"></dd>
                     <dt className="k-file-meta-label">Size:  </dt>
-                    <dd className="k-file-meta-value k-file-size"> {data.size}</dd>
+                    <dd className="k-file-meta-value k-file-size"> {data.size ? formatBytes(data.size) : ''}</dd>
                     <dd className="k-line-break"></dd>
                     <dt className="k-file-meta-label">Date Created:  </dt>
                     <dd className="k-file-meta-value k-file-created"> {dateCreated}</dd>
@@ -51,7 +53,7 @@ const FileSelectionRendering = data => {
     );
 }
 
-const MultipleSelectionRendering = (length) => {
+const MultipleSelectionRendering = (length: number) => {
     return (
         <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
             <div className="k-file-info">

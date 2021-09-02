@@ -94,8 +94,7 @@ const App = () => {
   const [panes, setPanes] = React.useState<PanesModel[]>(splitterPanes);
   const [breadcrumbData, setBreadcrumbData] = React.useState<BreadcrumbDataModel[]>(initialBreadcrumbItems);
 
-  const [contentData, setContentData] = React.useState<GridDataModel[] | DataModel[] | null>(data);
-  
+  const [contentData, setContentData] = React.useState<GridDataModel[] | DataModel[] | null>(data);  
   const [selected, setSelected] = React.useState<SelectedItemType>({});
   // TODO: refactor the usage
   const [selectedTreeItem, setSelectedTreeItem] = React.useState<TreeDataModel | null>(null);
@@ -106,10 +105,8 @@ const App = () => {
 
   const splitBtnItems: SplitBtnItems[] = [
     { text: 'Name', value: 'name' },
-    { text: 'Type', value: 'type' },
     { text: 'File Size', value: 'size'},
-    { text: 'Date Created', value: 'dateCreated'},
-    { text: 'Date Modified', value: 'dateModified'}
+    { text: 'Date Created', value: 'dateCreated'}
   ];
 
   const initialLogic: "and" | "or" = "and";
@@ -127,6 +124,11 @@ const App = () => {
   const gridData = React.useMemo(
     () => contentData ? process(contentData.slice(0), stateContentData) : null,
     [contentData, stateContentData]
+  );
+
+  const gridSort = React.useMemo(
+    () => stateContentData.sort,
+    [stateContentData]
   );
 
   const treeData = React.useMemo(
@@ -232,6 +234,7 @@ const App = () => {
     if (event.sort) {
       newSortedData.sort = event.sort;
     }
+    console.log(newSortedData)
     setStateContentData(newSortedData);
   };
 
@@ -323,7 +326,7 @@ const App = () => {
             <BreadcrumbComponent data={breadcrumbData}/>
             {contentView === 'grid'
               ? <GridView
-                  sort={stateContentData.sort}
+                  sort={gridSort}
                   selected={SELECTED_FIELD}
                   data={gridData}
                   onSelectionChange={handleSelectionChange}

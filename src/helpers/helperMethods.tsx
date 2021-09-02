@@ -1,12 +1,12 @@
-
-import { DataModel, TreeDataModel, GridDataModel } from '../interfaces/FileManagerModels';
+import { DataModel, TreeDataModel, GridDataModel, GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
 
 // .xlsx && .xls  => excel
 // .jpg && .png   => picture
 // .txt && .doc/x => text
 // no extension   => folder
-export const convertExtensionToIcon = (item: string) => {
-  const extension = item?.split('.')[1];
+export const convertExtensionToIcon = (item: string | null) => {
+  if (!item) { return null; }
+  const extension: string = item.split('.')[1];
 
   switch (extension) {
     case 'xlsx': case 'xls':
@@ -32,16 +32,16 @@ export const convertExtensionToIcon = (item: string) => {
   };
 };
 
-export const convertDateFormat = (date, intl) => {
-  return intl.formatDate(date, 'd.MM.y  h:mm:ss aa  EEEE');
+export const convertDateFormat = (date: Date | null, intl) => {
+  return date ? intl.formatDate(date, 'd.MM.y  h:mm:ss aa  EEEE') : date;
 };
 
-const addNewData = (data, intl) => {
+const addNewData = (data: DataModel[] | GridDataModel[] | null, intl) => {
   const newData = [] as GridDataModel[];
 
   if (data) {
     data.forEach(item => {
-      const itemDate = convertDateFormat(item.dateCreated, intl);
+      const itemDate: Date = convertDateFormat(item.dateCreated, intl);
   
       newData.push({
         name: item.name,
@@ -73,7 +73,7 @@ export const convertToTreeData = (data: DataModel[]) => {
     const treeData = [] as TreeDataModel[];
   
     data.forEach( item => {
-      if (!item.name.includes('.')) {
+      if (item.name && !item.name.includes('.')) {
         treeData.push({
           name: item.name,
           expanded: item.expanded,
@@ -84,10 +84,10 @@ export const convertToTreeData = (data: DataModel[]) => {
     return treeData;
 };
 
-export const searchTreeItem = (data, curItem) => {
+export const searchTreeItem = (data: DataModel, curItem: { name: Object}) => {
   if (Array.isArray(data)) {
     for (let i = 0; i < data.length; i++) {
-      let item = searchTreeItem(data[i], curItem);
+      let item: DataModel = searchTreeItem(data[i], curItem);
       if (item) {
         return item;
       }
@@ -104,7 +104,7 @@ export const searchTreeItem = (data, curItem) => {
   }
 };
 
-export const toggleViewBtnGroup = (btnGroupState, view: string) => {
+export const toggleViewBtnGroup = (btnGroupState: GridViewBtnGroup, view: string) => {
   if (!btnGroupState.listView && view !== 'grid') {
     return { gridView: false, listView: true };
   }
@@ -114,7 +114,7 @@ export const toggleViewBtnGroup = (btnGroupState, view: string) => {
   return { gridView: false, listView: false };
 };
 
-export const toggleSortBtnGroup = (btnGroupState, curState: string) => {
+export const toggleSortBtnGroup = (btnGroupState: SortingBtnGroup, curState: string) => {
   if (!btnGroupState.sortDesc && curState !== 'asc') {
     return { sortAsc: false, sortDesc: true };
   }
@@ -124,3 +124,14 @@ export const toggleSortBtnGroup = (btnGroupState, curState: string) => {
   return { sortAsc: false, sortDesc: false };
 };
 
+export const formatBytes = (bytes: number, decimals: number = 2) => {
+  if (bytes === 0) return '0 Bytes';
+
+  const k: number = 1024;
+  const dm: number = decimals < 0 ? 0 : decimals;
+  const sizes: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i: number = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+};

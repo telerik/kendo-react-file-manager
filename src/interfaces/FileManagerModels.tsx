@@ -1,12 +1,10 @@
 import { SplitButtonItemClickEvent } from "@progress/kendo-react-buttons";
-import { TableKeyDownEvent, TableSelectionChangeEvent } from "@progress/kendo-react-data-tools";
-import { GridRowClickEvent, GridSelectionChangeEvent, GridSortChangeEvent } from "@progress/kendo-react-grid";
+import { TableSelectionChangeEvent } from "@progress/kendo-react-data-tools";
+import { GridSelectionChangeEvent, GridSortChangeEvent } from "@progress/kendo-react-grid";
 import { UploadFileInfo, UploadOnAddEvent } from "@progress/kendo-react-upload";
-import { MouseEventHandler } from "react";
-import { ChangeEvent } from "react";
 
 export interface DataModel {
-    name: string;
+    name?: string;
     expanded?: boolean;
     size?: number;
     dateCreated?: Date;
