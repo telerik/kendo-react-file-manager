@@ -15,7 +15,7 @@ import { FolderTree } from './components/FolderTree';
 import { Breadcrumb } from './components/Breadcrumb';
 
 import { initialData } from './data/data';
-import { DataModel, GridDataModel, PanesModel, SplitBtnItems, SelectedItemType, TreeDataModel, SelectionChangeEvent, ButtonClickEvent } from './interfaces/FileManagerModels';
+import { DataModel, GridDataModel, PanesModel, SplitBtnItems, SelectedItemType, TreeDataModel, SelectionChangeEvent, UploadAddEvent, ViewChangeEvent } from './interfaces/FileManagerModels';
 import {
   formatData,
   convertToTreeData,
@@ -212,7 +212,7 @@ const App = () => {
     }
   };
 
-  const handleViewChange = (event: ButtonClickEvent) => {
+  const handleViewChange = (event: ViewChangeEvent) => {
     if (event.viewState.gridView) {
       setContentView('grid');
     }
@@ -256,23 +256,26 @@ const App = () => {
   //   setInputGridData(newSortedGrid);
   // };
 
-  const handleFileChange = event => {
-    setFiles(event.files);
+  const handleFileChange = (event: UploadAddEvent) => {
+    if (event.files) {
+      setFiles(event.files);
+    }
   };
 
-  const handleClearFileList = event => {
+  const handleClearFileList = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (event) {
       setFiles([]);
     }
   };
 
 
-  const handleUploadDone = event => {
+  const handleUploadDone = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     console.log('done event', event);
     console.log('files', files);
     console.log('grid data', gridData);
     
     let newElement = {};
+    // event.event.newState
     // map through the elements and cast the to the DataGridModel -> add to grid data
     // newElement['name'] = files.name;
   };

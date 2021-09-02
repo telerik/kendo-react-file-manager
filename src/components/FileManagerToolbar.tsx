@@ -4,13 +4,14 @@ import {
     Button,
     ButtonGroup,
     SplitButton,
-    SplitButtonClickEvent
+    SplitButtonItemClickEvent
 } from '@progress/kendo-react-buttons';
 import { Switch, Input, InputChangeEvent, SwitchChangeEvent } from "@progress/kendo-react-inputs";
 import { Dialog, DialogActionsBar } from '@progress/kendo-react-dialogs';
-import { Upload } from '@progress/kendo-react-upload';
+import { Upload, UploadOnAddEvent } from '@progress/kendo-react-upload';
+import { BaseEvent } from '@progress/kendo-react-common';
 import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods';
-import { ButtonClickEvent, GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
+import { GridViewBtnGroup, SortingBtnGroup, UploadAddEvent } from '../interfaces/FileManagerModels';
 
 export const FileManagerToolbar = (props: any) => {
     const [dialogVisibility, setDialogVisibility] = React.useState<boolean>(false);
@@ -29,7 +30,7 @@ export const FileManagerToolbar = (props: any) => {
         });
     };
 
-    const handleGridViewChange = (event: ButtonClickEvent) => {
+    const handleGridViewChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         if (event) {
             const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup, 'grid');
             setViewBtnGroup(newBtnGroupState);
@@ -40,20 +41,8 @@ export const FileManagerToolbar = (props: any) => {
             });
         }
     };
-
-    const handleListViewChange = (event: ButtonClickEvent) => {
-        if (event) {
-            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup, 'list');
-            setViewBtnGroup(newBtnGroupState);
-
-            props.onViewChange.call(undefined, {
-                viewValue: newBtnGroupState,
-                event: event
-            });
-        }
-    };
-
-    const handleAscBtnClick = (event: ButtonClickEvent) => {
+    
+    const handleAscBtnClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         if (event) {
             const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'asc');
             setSortBtnGroup(newBtnGroupState);
@@ -66,27 +55,38 @@ export const FileManagerToolbar = (props: any) => {
         } 
     };
 
-    const handleDescSortBtnClick = (event: ButtonClickEvent) => {
-        if (event) {
-            const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'desc');
-            setSortBtnGroup(newBtnGroupState);
+    const handleDescSortBtnClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        const newBtnGroupState = toggleSortBtnGroup(sortBtnGroup, 'desc');
+        setSortBtnGroup(newBtnGroupState);
 
-            props.onSortChange.call(undefined, {
-                direction: 'desc',
-                sortValue: newBtnGroupState,
-                event: event
-            });
-        } 
+        props.onSortChange.call(undefined, {
+            direction: 'desc',
+            sortValue: newBtnGroupState,
+            event: event
+        });
     };
 
-    // const handleItemClick = (event: SplitButtonClickEvent) => {
-    //     props.onSplitBtnItemClick.call(undefined, {
-    //         sortType: event.item.text,
-    //         event: event
-    //     });
-    // };
+    const handleListViewChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        if (event) {
+            const newBtnGroupState = toggleViewBtnGroup(viewBtnGroup, 'list');
+            setViewBtnGroup(newBtnGroupState);
 
-    const handleDialogVisibility = event => {
+            props.onViewChange.call(undefined, {
+                viewValue: newBtnGroupState,
+                event: event
+            });
+        }
+    };
+
+
+    const handleItemClick = (event: SplitButtonItemClickEvent) => {
+        props.onSortChange.call(undefined, {
+            // sortType: event.item.text,
+            event: event
+        });
+    };
+
+    const handleDialogVisibility = (event: BaseEvent<Dialog> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setDialogVisibility(!dialogVisibility);
         if (!dialogVisibility) {
             props.onUploadDone.call(undefined, {
@@ -95,23 +95,22 @@ export const FileManagerToolbar = (props: any) => {
         }
     };
 
-    const handleFileChange = event => {
+    const handleFileChange = (event: UploadAddEvent) => {
         props.onFileChange.call(undefined, {
             files: event.newState,
             event: event
         });
     };
 
-    const handleUploadClearList = event => {
+    const handleUploadClearList = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         props.onClearFileList.call(undefined, {
             event: event
         }); 
     };
 
-    const handleUploadDone = event => {
+    const handleUploadDone = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setDialogVisibility(!dialogVisibility);
         props.onUploadDone.call(undefined, {
-            files: event.newState,
             event: event
         });
     };

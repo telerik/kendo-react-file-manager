@@ -1,5 +1,7 @@
 import { TableKeyDownEvent, TableSelectionChangeEvent } from "@progress/kendo-react-data-tools";
 import { GridRowClickEvent, GridSelectionChangeEvent } from "@progress/kendo-react-grid";
+import { UploadFileInfo, UploadOnAddEvent } from "@progress/kendo-react-upload";
+import { MouseEventHandler } from "react";
 import { ChangeEvent } from "react";
 
 export interface DataModel {
@@ -59,10 +61,14 @@ export interface SelectionChangeEvent extends GridSelectionChangeEvent {
     pressedKey?: string;
 };
 
-export interface ButtonClickEvent {
-    event: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, index?: number) => void;
+export interface UploadAddEvent extends UploadOnAddEvent {
+    event?: UploadOnAddEvent;
+    files?: Array<UploadFileInfo>;
+};
+
+export interface ViewChangeEvent extends React.MouseEvent<HTMLButtonElement, MouseEvent> {
     viewState: {
         gridView?: string;
         listView?: string;
-    };
+    }
 }
