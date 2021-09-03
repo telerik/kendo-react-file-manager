@@ -1,6 +1,7 @@
 import { SplitButtonItemClickEvent } from "@progress/kendo-react-buttons";
 import { TableSelectionChangeEvent } from "@progress/kendo-react-data-tools";
 import { GridSelectionChangeEvent, GridSortChangeEvent } from "@progress/kendo-react-grid";
+import { SwitchChangeEvent } from "@progress/kendo-react-inputs";
 import { UploadFileInfo, UploadOnAddEvent } from "@progress/kendo-react-upload";
 
 export interface DataModel {
@@ -27,7 +28,7 @@ export interface GridDataModel {
     name: string;
     dateCreated?: Date;
     size?: number;
-    icon?: IconType;
+    icon?: IconType | null;
     items?: DataModel[];
 };
 
@@ -82,4 +83,8 @@ export interface SortChangeEvent extends GridSortChangeEvent {
     event?: SplitButtonItemClickEvent;
     direction?: 'asc' | 'desc';
     item?: any;
+};
+
+export interface AppSwitchChangeEvent extends SwitchChangeEvent {
+    event: SwitchChangeEvent;
 };

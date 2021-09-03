@@ -23,17 +23,16 @@ const NoDataRendering = () => {
 
 const FileSelectionRendering = (data: DataModel) => {
     const intl = useInternationalization();
-    const dateCreated: Date = convertDateFormat(data.dateCreated ? data.dateCreated : null, intl).toString();
-    const dateModified: Date = convertDateFormat(data.dateModified ? data.dateModified : null, intl).toString();
+    const dateCreated: Date = convertDateFormat(data.dateCreated ? data.dateCreated : null, intl);
+    const dateModified: Date = convertDateFormat(data.dateModified ? data.dateModified : null, intl);
     const iconObject: IconType | null = convertExtensionToIcon(data.name ? data.name : null);
-
     return (
         <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
             <div className="k-file-info">
                 <span className="k-file-preview">
                     <span className={classNames("k-file-icon k-icon", iconObject?.icon ? iconObject.icon : '')}></span>
                 </span>
-                <span className="k-file-name k-single-file-selected">{data.name}</span>
+                <span className="k-file-name k-single-file-selected">{data.name? data.name : ''}</span>
                 <dl className="k-file-meta">
                     <dt className="k-file-meta-label">Type:  </dt>
                     <dd className= {"k-file-meta-value k-file-type"}> {iconObject?.type ? iconObject.type : ''}</dd>
@@ -42,10 +41,10 @@ const FileSelectionRendering = (data: DataModel) => {
                     <dd className="k-file-meta-value k-file-size"> {data.size ? formatBytes(data.size) : ''}</dd>
                     <dd className="k-line-break"></dd>
                     <dt className="k-file-meta-label">Date Created:  </dt>
-                    <dd className="k-file-meta-value k-file-created"> {dateCreated}</dd>
+                    <dd className="k-file-meta-value k-file-created"> {dateCreated ? dateCreated.toString() : ''}</dd>
                     <dd className="k-line-break"></dd>
                     <dt className="k-file-meta-label">Date Modified:  </dt>
-                    <dd className="k-file-meta-value k-file-modified"> {dateModified}</dd>
+                    <dd className="k-file-meta-value k-file-modified"> {dateModified ? dateModified.toString() : ''}</dd>
                     <dd className="k-line-break"></dd>
                 </dl>
             </div>

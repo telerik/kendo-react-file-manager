@@ -48,6 +48,7 @@ export const GridView = (props) => {
 
   return (
     <Grid 
+      style={{ height: '100%' }}
       className={"k-filemanager-grid k-grid-display-block k-editable"}
       data={props.data.data}
       sortable={true}

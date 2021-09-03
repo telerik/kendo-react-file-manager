@@ -7,7 +7,7 @@ import { getter, clone } from '@progress/kendo-react-common';
 import { getSelectedState, getSelectedStateFromKeyDown } from '@progress/kendo-react-grid';
 import { UploadFileInfo } from '@progress/kendo-react-upload';
 import { TreeViewItemClickEvent } from '@progress/kendo-react-treeview';
-import { InputChangeEvent, SwitchChangeEvent } from '@progress/kendo-react-inputs';
+import { InputChangeEvent } from '@progress/kendo-react-inputs';
 
 import { FileManagerToolbar } from './components/FileManagerToolbar';
 import { GridView } from './components/GridView';
@@ -28,15 +28,16 @@ import {
   UploadAddEvent,
   ViewChangeEvent,
   BreadcrumbDataModel,
-  SortChangeEvent
+  SortChangeEvent,
+  AppSwitchChangeEvent
 } from './interfaces/FileManagerModels';
 import {
   formatData,
   convertToTreeData,
   convertToGridData,
-  searchTreeItem
+  searchTreeItem,
+  addToData
 } from './helpers/helperMethods';
-// import { SplitButtonItem } from '@progress/kendo-react-buttons';
 
 const splitterPanes: PanesModel[] = [
   {
@@ -122,7 +123,10 @@ const App = () => {
   });
 
   const gridData = React.useMemo(
-    () => contentData ? process(contentData.slice(0), stateContentData) : null,
+    () => {
+      console.log('update grid data', contentData)
+      return contentData ? process(contentData.slice(0), stateContentData) : null
+    },
     [contentData, stateContentData]
   );
 
@@ -137,8 +141,8 @@ const App = () => {
   );
   
   const updateContentData = React.useCallback(
-    (curItem?: DataModel) => {
-      let newData: GridDataModel[] = convertToGridData(curItem, intl);
+    (curItem?: DataModel, newContentData: DataModel[] | null = null) => {
+      let newData: GridDataModel[] | DataModel[] = newContentData ? newContentData : convertToGridData(curItem, intl);
 
       if (newData && stateContentData.sort) {
         newData = orderBy(newData.map(item => {
@@ -234,7 +238,6 @@ const App = () => {
     if (event.sort) {
       newSortedData.sort = event.sort;
     }
-    console.log(newSortedData)
     setStateContentData(newSortedData);
   };
 
@@ -250,9 +253,9 @@ const App = () => {
     });
   };
 
-  const handleSwitchChange = (event: SwitchChangeEvent) => {
+  const handleSwitchChange = (event: AppSwitchChangeEvent) => {
     const newPanes: PanesModel[] = panes.slice(0)
-    if (event.value) {
+    if (event.event.value) {
       newPanes[2].size = '30%';
       setPanes(newPanes)
     } else {
@@ -262,7 +265,6 @@ const App = () => {
   };
 
   const handleViewChange = (event: ViewChangeEvent) => {
-    console.log('change view', event)
     if (event.viewValue.gridView) {
       setContentView('grid');
     }
@@ -285,14 +287,11 @@ const App = () => {
 
 
   const handleUploadDone = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    console.log('done event', event);
-    console.log('files', files);
-    console.log('grid data', contentData);
-    
-    let newElement = {};
-    // event.event.newState
-    // map through the elements and cast the to the DataGridModel -> add to grid data
-    // newElement['name'] = files.name;
+    const newContentData: DataModel[] | null = addToData(contentData, files, intl);
+
+    // setContentData(newContentData);
+    updateContentData(selected, newContentData);
+    setFiles([]);
   };
 
   return (

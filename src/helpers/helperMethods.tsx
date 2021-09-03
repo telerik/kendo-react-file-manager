@@ -1,10 +1,12 @@
+import { UploadFileInfo } from '@progress/kendo-react-upload';
+import { clone } from '@progress/kendo-react-common';
 import { DataModel, TreeDataModel, GridDataModel, GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
 
 // .xlsx && .xls  => excel
 // .jpg && .png   => picture
 // .txt && .doc/x => text
 // no extension   => folder
-export const convertExtensionToIcon = (item: string | null) => {
+export const convertExtensionToIcon = (item: string | null | undefined) => {
   if (!item) { return null; }
   const extension: string = item.split('.')[1];
 
@@ -14,7 +16,7 @@ export const convertExtensionToIcon = (item: string | null) => {
         icon: 'k-i-file-data',
         type: 'Data'
       };
-    case 'jpg': case 'png':
+    case 'jpg': case 'png': case '.JPG':
       return {
         icon: 'k-i-file-image',
         type: 'Image'
@@ -72,7 +74,7 @@ export const convertToGridData = (selectedItem: DataModel | null = null, intl) =
 export const convertToTreeData = (data: DataModel[]) => {
     const treeData = [] as TreeDataModel[];
   
-    data.forEach( item => {
+    data.forEach(item => {
       if (item.name && !item.name.includes('.')) {
         treeData.push({
           name: item.name,
@@ -84,7 +86,7 @@ export const convertToTreeData = (data: DataModel[]) => {
     return treeData;
 };
 
-export const searchTreeItem = (data: DataModel, curItem: { name: Object}) => {
+export const searchTreeItem = (data: DataModel, curItem: DataModel) => {
   if (Array.isArray(data)) {
     for (let i = 0; i < data.length; i++) {
       let item: DataModel = searchTreeItem(data[i], curItem);
@@ -135,3 +137,18 @@ export const formatBytes = (bytes: number, decimals: number = 2) => {
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
+
+export const addToData = (data: DataModel[] | GridDataModel[] | null, files: UploadFileInfo[], intl) => {
+  if (!data) { return null; }
+
+  files.forEach(file => {
+    data.push({
+      name: file.name,
+      dateCreated: convertDateFormat(new Date(), intl),
+      size: file.size,
+      icon: convertExtensionToIcon(file.extension)
+    });
+  })
+
+  return data;
+}

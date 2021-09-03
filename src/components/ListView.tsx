@@ -9,7 +9,7 @@ export const ListView = (props: any) => {
           <div className="k-listview-content k-d-flex k-flex-row k-flex-wrap">
               { props.data.data 
                 ? props.data.data.map((item: any) => {
-                    const iconObject: IconType = convertExtensionToIcon(item.name);
+                    const iconObject: IconType | null = convertExtensionToIcon(item.name);
                     return (
                     <>
                         <div className="k-listview-item">
