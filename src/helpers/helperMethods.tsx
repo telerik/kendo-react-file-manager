@@ -138,9 +138,8 @@ export const formatBytes = (bytes: number, decimals: number = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
-export const addToData = (data: DataModel[] | GridDataModel[] | null, files: UploadFileInfo[], intl) => {
-  if (!data) { return null; }
-
+export const addToData = (data: DataModel[] | GridDataModel[], files: UploadFileInfo[], intl) => {
+   
   files.forEach(file => {
     data.push({
       name: file.name,

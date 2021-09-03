@@ -18,8 +18,7 @@ import { BreadcrumbComponent } from './components/Breadcrumb';
 
 import { initialData } from './data/data';
 import { 
-  DataModel,
-  GridDataModel,
+  DataModel, 
   PanesModel,
   SplitBtnItems,
   SelectedItemType,
@@ -33,8 +32,7 @@ import {
 } from './interfaces/FileManagerModels';
 import {
   formatData,
-  convertToTreeData,
-  convertToGridData,
+  convertToTreeData, 
   searchTreeItem,
   addToData
 } from './helpers/helperMethods';
@@ -94,8 +92,7 @@ const App = () => {
   const [data, setData] = React.useState<DataModel[]>(formatData(initialData, intl));
   const [panes, setPanes] = React.useState<PanesModel[]>(splitterPanes);
   const [breadcrumbData, setBreadcrumbData] = React.useState<BreadcrumbDataModel[]>(initialBreadcrumbItems);
-
-  const [contentData, setContentData] = React.useState<GridDataModel[] | DataModel[] | null>(data);  
+ 
   const [selected, setSelected] = React.useState<SelectedItemType>({});
   // TODO: refactor the usage
   const [selectedTreeItem, setSelectedTreeItem] = React.useState<TreeDataModel | null>(null);
@@ -121,42 +118,6 @@ const App = () => {
       ]
     }
   });
-
-  const gridData = React.useMemo(
-    () => {
-      console.log('update grid data', contentData)
-      return contentData ? process(contentData.slice(0), stateContentData) : null
-    },
-    [contentData, stateContentData]
-  );
-
-  const gridSort = React.useMemo(
-    () => stateContentData.sort,
-    [stateContentData]
-  );
-
-  const treeData = React.useMemo(
-    () => convertToTreeData(data),
-    [data]
-  );
-  
-  const updateContentData = React.useCallback(
-    (curItem?: DataModel, newContentData: DataModel[] | null = null) => {
-      let newData: GridDataModel[] | DataModel[] = newContentData ? newContentData : convertToGridData(curItem, intl);
-
-      if (newData && stateContentData.sort) {
-        newData = orderBy(newData.map(item => {
-          return ({
-        ...item,
-        [SELECTED_FIELD]: selected[idGetter(item)]
-        })}
-        ), stateContentData.sort)
-
-        setContentData(newData);
-      }
-    },
-    [intl, selected, stateContentData]
-  );
   
   const updateFileDetailsData = React.useCallback(
     (selection: SelectedItemType) => {
@@ -193,8 +154,7 @@ const App = () => {
     const newSelectedItem: TreeDataModel = searchTreeItem(data, event.item);
 
     expandItem(event);
-    setSelectedTreeItem(newSelectedItem);
-    updateContentData(newSelectedItem);
+    setSelectedTreeItem(newSelectedItem); 
     setFileDetailsData(event.item);
   };
 
@@ -287,18 +247,20 @@ const App = () => {
 
 
   const handleUploadDone = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const newContentData: DataModel[] | null = addToData(contentData, files, intl);
+    // const newContentData: DataModel[] | null = addToData(contentData, files, intl);
 
-    // setContentData(newContentData);
-    updateContentData(selected, newContentData);
-    setFiles([]);
+    // // setContentData(newContentData);
+    // updateContentData(selected, newContentData);
+    // setFiles([]);
+    setData(addToData(selectedTreeItem as any, files, intl));
   };
 
   return (
      <div className="k-widget k-filemanager k-filemanager-resizable">
         <div className="k-filemanager-header">
           <FileManagerToolbar 
-            data={data}
+            sort={stateContentData.sort}
+           
             splitItems={splitBtnItems}
             files={files}
             onSearchChange={handleSearchChange}
@@ -317,7 +279,7 @@ const App = () => {
           onChange={handleSplitterChange} 
         >
           <FolderTree 
-            data={treeData}
+            data={convertToTreeData(data)}
             selectedItem={selectedTreeItem}
             onItemClick={handleTreeItemClick}
             />
@@ -325,14 +287,14 @@ const App = () => {
             <BreadcrumbComponent data={breadcrumbData}/>
             {contentView === 'grid'
               ? <GridView
-                  sort={gridSort}
+                  sort={stateContentData.sort}
                   selected={SELECTED_FIELD}
-                  data={gridData}
+                  data={process((selectedTreeItem !==null )? (selectedTreeItem.items || []).slice() : [], stateContentData)}
                   onSelectionChange={handleSelectionChange}
                   onSortChange={handleSortChange}
                   />
               : <ListView
-                  data={gridData}
+                  data={process(data.slice(0), stateContentData)}
                   />
             }
           </div>
