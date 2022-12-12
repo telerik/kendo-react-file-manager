@@ -46,11 +46,11 @@ export const FolderTree = (props) => {
     if (props.item.edit) {
       return (
         <span>
-        <input className='k-textbox'
-          autoFocus
-          value={props.item.path}
-          onChange={(e) => handleEdit(e, props.item)}
-          onBlur={(e) => handleBlur(e, props.item)} />
+          <input className='k-textbox'
+            autoFocus
+            value={props.item.path}
+            onChange={(e) => handleEdit(e, props.item)}
+            onBlur={(e) => handleBlur(e, props.item)} />
         </span>
       );
     }

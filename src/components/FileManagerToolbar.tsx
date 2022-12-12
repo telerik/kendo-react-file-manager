@@ -101,13 +101,13 @@ export const FileManagerToolbar = (props) => {
     <Toolbar className="k-filemanager-toolbar">
       <Button onClick={handleNewFolderClick}>New Folder</Button>
       <Button onClick={handleDialogVisibility}>Upload</Button>
-      { dialogVisible &&
+      {dialogVisible &&
         <Dialog
           title={'Upload Files'}
           className={'k-filemanager-upload-dialog'}
           onClose={handleDialogVisibility}
           contentStyle={{ width: '530px' }}
-          >
+        >
           <Upload
             batch={false}
             multiple={true}
@@ -119,10 +119,10 @@ export const FileManagerToolbar = (props) => {
             onStatusChange={handleFileChange}
             saveUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/save'}
             removeUrl={'https://demos.telerik.com/kendo-ui/service-v4/upload/remove'}
-            />
+          />
           <DialogActionsBar layout={'end'}>
             <Button onClick={handleUploadClearList} > Clear List</Button>
-            <Button primary={true} onClick={handleUploadDone}> Done </Button>
+            <Button themeColor={'primary'} onClick={handleUploadDone}> Done </Button>
           </DialogActionsBar>
         </Dialog >
       }
@@ -132,7 +132,7 @@ export const FileManagerToolbar = (props) => {
           togglable={true}
           selected={props.sort[0].dir === 'asc'}
           onClick={handleAscBtnClick}
-          >
+        >
           <span className="k-icon k-i-sort-asc-sm"></span>
         </Button>
         <Button
@@ -140,7 +140,7 @@ export const FileManagerToolbar = (props) => {
           togglable={true}
           selected={props.sort[0].dir === 'desc'}
           onClick={handleDescSortBtnClick}
-          >
+        >
           <span className="k-icon k-i-sort-desc-sm"></span>
         </Button>
       </ButtonGroup>
@@ -148,7 +148,7 @@ export const FileManagerToolbar = (props) => {
         text={'Sort By'}
         items={props.splitItems}
         onItemClick={handleItemClick}
-        >
+      >
       </SplitButton>
       <ButtonGroup>
         <Button
@@ -156,7 +156,7 @@ export const FileManagerToolbar = (props) => {
           togglable={true}
           selected={viewBtnGroup.gridView}
           onClick={handleGridViewChange}
-          >
+        >
           <span className="k-icon k-i-grid-layout"></span>
         </Button>
         <Button
@@ -164,24 +164,17 @@ export const FileManagerToolbar = (props) => {
           togglable={true}
           selected={viewBtnGroup.listView}
           onClick={handleListViewChange}
-          >
+        >
           <span className="k-icon k-i-grid"></span>
         </Button>
       </ButtonGroup>
       <div className="k-spacer">&nbsp;</div>
       <div className="k-filemanager-details-toggle">
         <label>View Details</label>
-        <Switch defaultChecked={true} onChange={handleSwitchChange} >
-          <Input type="checkbox"/>
-          <span className="k-switch-container">
-            <span className="k-switch-label-on">On</span>
-            <span className="k-switch-label-off">Off</span>
-            <span className="k-switch-handle"></span>
-          </span>
-        </Switch>
+        <Switch defaultChecked={true} onChange={handleSwitchChange} />
       </div>
       <div className="k-filemanager-search-tool k-textbox k-toolbar-last-visible" >
-        <Input className="k-input" placeholder="Search" onChange={handleSearchChange}/>
+        <Input className="k-input" placeholder="Search" onChange={handleSearchChange} />
         <span className="k-input-icon">
           <span className="k-icon k-i-search"></span>
         </span>
