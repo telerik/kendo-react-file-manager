@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Dialog as DialogComponent, DialogActionsBar, DialogCloseEvent } from '@progress/kendo-react-dialogs';
 import { Input, InputChangeEvent } from '@progress/kendo-react-inputs';
 import { getName } from '../helpers/helperMethods';
+import { Button } from "@progress/kendo-react-buttons";
 
 export const EditDialog = (props) => {
   const [inputValue, setInputValue] = React.useState(props.editValue);
@@ -10,7 +11,7 @@ export const EditDialog = (props) => {
     props.onDialogClick({
       event,
       path: props.editValue.path,
-      value: typeof(inputValue) === 'string' ? inputValue : inputValue.path,
+      value: typeof (inputValue) === 'string' ? inputValue : inputValue.path,
       type: event.target.value
     });
   };
@@ -32,10 +33,10 @@ export const EditDialog = (props) => {
         style={{ width: '350px', margin: '25px', textAlign: 'center' }}
         className={'k-textbox'}
         onChange={handleInputChange}
-        />
+      />
       <DialogActionsBar>
-        <button value={'rename'} className='k-button k-state-selected' onClick={handleDialogClick}>Rename</button>
-        <button value={'cancel'} className='k-button' onClick={handleDialogClick}>Cancel</button>
+        <Button value={'rename'} className='k-button k-selected' onClick={handleDialogClick}>Rename</Button>
+        <Button value={'cancel'} className='k-button' onClick={handleDialogClick}>Cancel</Button>
       </DialogActionsBar>
     </DialogComponent>
   );
@@ -57,8 +58,8 @@ export const DeleteDialog = (props) => {
     <DialogComponent title={'Please confirm'} onClose={handleDialogClose}>
       <p style={{ width: '350px', margin: '25px', textAlign: 'center' }}>Are you sure you want to delete the selected file? You cannot undo this action.</p>
       <DialogActionsBar>
-        <button value={'delete'} className='k-button k-state-selected' onClick={handleDialogClick}>Delete</button>
-        <button value={'cancel'} className='k-button' onClick={handleDialogClick}>Cancel</button>
+        <Button value={'delete'} className='k-button k-selected' onClick={handleDialogClick}>Delete</Button>
+        <Button value={'cancel'} className='k-button' onClick={handleDialogClick}>Cancel</Button>
       </DialogActionsBar>
     </DialogComponent>
   );

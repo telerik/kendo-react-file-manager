@@ -12,6 +12,7 @@ import { Upload } from '@progress/kendo-react-upload';
 import { BaseEvent } from '@progress/kendo-react-common';
 import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods';
 import { GridViewBtnGroup, UploadAddEvent } from '../interfaces/FileManagerModels';
+import { Label } from "@progress/kendo-react-labels";
 
 export const FileManagerToolbar = (props) => {
   const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
@@ -170,7 +171,7 @@ export const FileManagerToolbar = (props) => {
       </ButtonGroup>
       <div className="k-spacer">&nbsp;</div>
       <div className="k-filemanager-details-toggle">
-        <label>View Details</label>
+        <Label>View Details </Label>
         <Switch defaultChecked={true} onChange={handleSwitchChange} />
       </div>
       <div className="k-filemanager-search-tool k-textbox k-toolbar-last-visible" >
