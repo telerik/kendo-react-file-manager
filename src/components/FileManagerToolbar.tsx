@@ -129,21 +129,17 @@ export const FileManagerToolbar = (props) => {
       }
       <ButtonGroup>
         <Button
-          className="k-toggle-button k-button-icon k-group-start"
           togglable={true}
+          icon="k-icon k-i-sort-asc-sm"
           selected={props.sort[0].dir === 'asc'}
           onClick={handleAscBtnClick}
-        >
-          <span className="k-icon k-i-sort-asc-sm"></span>
-        </Button>
+        />
         <Button
-          className="k-toggle-button k-button k-button-icon k-group-end"
           togglable={true}
+          icon="k-icon k-i-sort-desc-sm"
           selected={props.sort[0].dir === 'desc'}
           onClick={handleDescSortBtnClick}
-        >
-          <span className="k-icon k-i-sort-desc-sm"></span>
-        </Button>
+        />
       </ButtonGroup>
       <SplitButton
         text={'Sort By'}
@@ -153,21 +149,17 @@ export const FileManagerToolbar = (props) => {
       </SplitButton>
       <ButtonGroup>
         <Button
-          className={"k-toggle-button k-button-icon k-group-start"}
           togglable={true}
+          icon="k-icon k-i-grid-layout"
           selected={viewBtnGroup.gridView}
           onClick={handleGridViewChange}
-        >
-          <span className="k-icon k-i-grid-layout"></span>
-        </Button>
+        />
         <Button
-          className={"k-toggle-button k-button-icon k-group-end"}
           togglable={true}
+          icon="k-icon k-i-grid"
           selected={viewBtnGroup.listView}
           onClick={handleListViewChange}
-        >
-          <span className="k-icon k-i-grid"></span>
-        </Button>
+        />
       </ButtonGroup>
       <div className="k-spacer">&nbsp;</div>
       <div className="k-filemanager-details-toggle">

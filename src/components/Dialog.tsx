@@ -35,8 +35,8 @@ export const EditDialog = (props) => {
         onChange={handleInputChange}
       />
       <DialogActionsBar>
-        <Button value={'rename'} className='k-button k-selected' onClick={handleDialogClick}>Rename</Button>
-        <Button value={'cancel'} className='k-button' onClick={handleDialogClick}>Cancel</Button>
+        <Button value={'rename'} themeColor='primary' onClick={handleDialogClick}>Rename</Button>
+        <Button value={'cancel'} themeColor='base' onClick={handleDialogClick}>Cancel</Button>
       </DialogActionsBar>
     </DialogComponent>
   );
@@ -58,8 +58,8 @@ export const DeleteDialog = (props) => {
     <DialogComponent title={'Please confirm'} onClose={handleDialogClose}>
       <p style={{ width: '350px', margin: '25px', textAlign: 'center' }}>Are you sure you want to delete the selected file? You cannot undo this action.</p>
       <DialogActionsBar>
-        <Button value={'delete'} className='k-button k-selected' onClick={handleDialogClick}>Delete</Button>
-        <Button value={'cancel'} className='k-button' onClick={handleDialogClick}>Cancel</Button>
+        <Button value={'delete'} themeColor='primary' onClick={handleDialogClick}>Delete</Button>
+        <Button value={'cancel'} themeColor='base' onClick={handleDialogClick}>Cancel</Button>
       </DialogActionsBar>
     </DialogComponent>
   );
