@@ -23,8 +23,8 @@ const NoDataRendering = () => {
 
 const FileSelectionRendering = (item: DataModel) => {
   const intl = useInternationalization();
-  const dateCreated: Date = convertDateFormat(item.dateCreated ? item.dateCreated : null, intl);
-  const dateModified: Date = convertDateFormat(item.dateModified ? item.dateModified : null, intl);
+  const dateCreated: String = convertDateFormat(item.dateCreated ? item.dateCreated : null, intl);
+  const dateModified: String = convertDateFormat(item.dateModified ? item.dateModified : null, intl);
 
   return (
     <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
@@ -32,10 +32,10 @@ const FileSelectionRendering = (item: DataModel) => {
         <span className="k-file-preview">
           <span className={classNames("k-file-icon k-icon", item.icon ? item.icon.iconClass : '')}></span>
         </span>
-        <span className="k-file-name k-single-file-selected">{item.path? getName(item.path) : ''}</span>
+        <span className="k-file-name k-single-file-selected">{item.path ? getName(item.path) : ''}</span>
         <dl className="k-file-meta">
           <dt className="k-file-meta-label">Type:  </dt>
-          <dd className= {"k-file-meta-value k-file-type"}> {item.icon ? item.icon.type : ''}</dd>
+          <dd className={"k-file-meta-value k-file-type"}> {item.icon ? item.icon.type : ''}</dd>
           <dd className="k-line-break"></dd>
           <dt className="k-file-meta-label">Size:  </dt>
           <dd className="k-file-meta-value k-file-size"> {item.size ? formatBytes(item.size) : ''}</dd>
