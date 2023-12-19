@@ -4,6 +4,7 @@ import { GridSelectionChangeEvent } from "@progress/kendo-react-grid";
 import { SwitchChangeEvent } from "@progress/kendo-react-inputs";
 import { Offset } from "@progress/kendo-react-popup";
 import { UploadFileInfo, UploadOnAddEvent } from "@progress/kendo-react-upload";
+import { SVGIcon } from "@progress/kendo-svg-icons";
 
 export interface DataModel {
     path?: string;
@@ -19,6 +20,7 @@ export interface DataModel {
 };
 
 export interface IconType {
+    svgIcon?: SVGIcon;
     iconClass?: string;
     type?: string;
 };

@@ -1,7 +1,8 @@
 import { useInternationalization } from '@progress/kendo-react-intl';
 import { convertDateFormat, getName, formatBytes } from '../helpers/helperMethods';
-import { classNames } from '@progress/kendo-react-common';
 import { DataModel } from '../interfaces/FileManagerModels';
+import { SvgIcon } from '@progress/kendo-react-common';
+import { fileIcon } from '@progress/kendo-svg-icons';
 
 export const FileInformation = (props) => {
   return (
@@ -14,7 +15,10 @@ const NoDataRendering = () => {
   return (
     <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
       <div className="k-file-info">
-        <span className="k-file-preview"><span className="k-file-icon k-icon k-i-none"></span></span>
+        <span className="k-file-preview">
+          <span className="k-file-icon k-icon k-icon k-i-none">
+          </span>
+        </span>
         <span className="k-file-name k-no-file-selected">No File Selected</span>
       </div>
     </div>
@@ -25,12 +29,13 @@ const FileSelectionRendering = (item: DataModel) => {
   const intl = useInternationalization();
   const dateCreated: String = convertDateFormat(item.dateCreated ? item.dateCreated : null, intl);
   const dateModified: String = convertDateFormat(item.dateModified ? item.dateModified : null, intl);
-
+  const { svgIcon }  = item.icon!;
+  
   return (
     <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
       <div className="k-file-info">
         <span className="k-file-preview">
-          <span className={classNames("k-file-icon k-icon", item.icon ? item.icon.iconClass : '')}></span>
+          <SvgIcon icon={svgIcon} size='xxxlarge'/>
         </span>
         <span className="k-file-name k-single-file-selected">{item.path ? getName(item.path) : ''}</span>
         <dl className="k-file-meta">
@@ -57,7 +62,8 @@ const MultipleSelectionRendering = (length: number) => {
     <div className="k-filemanager-preview" style={{ width: '100%', border: 0 }}>
       <div className="k-file-info">
         <span className="k-file-preview" style={{ width: '100%', border: 0 }}>
-          <span className="k-file-icon k-icon k-i-file"></span></span>
+          <SvgIcon icon={fileIcon} size='xxxlarge'/>
+        </span>
         <span className="k-file-name k-multiple-files-selected">{length} items</span>
       </div>
     </div>
