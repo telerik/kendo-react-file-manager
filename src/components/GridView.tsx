@@ -10,7 +10,7 @@ import {
 } from '@progress/kendo-react-grid';
 import { useTableKeyboardNavigation } from '@progress/kendo-react-data-tools';
 import { useInternationalization } from '@progress/kendo-react-intl';
-import { classNames } from '@progress/kendo-react-common';
+import { SvgIcon } from '@progress/kendo-react-common';
 import { convertDateFormat, getName, formatBytes } from '../helpers/helperMethods';
 
 const DateCreatedCell  = (props: GridCellProps) => {
@@ -47,13 +47,14 @@ const SizeCell = (props: GridCellProps) => {
 const NameCell = (props: GridCellProps) => {
   const navigationAttributes = useTableKeyboardNavigation(props.id);
   const name = getName(props.dataItem.path);
+  const { svgIcon } = props.dataItem.icon;
 
   return (
     <td
       {...{ [GRID_COL_INDEX_ATTRIBUTE]: props.columnIndex }}
       {...navigationAttributes}
     >
-      <span className={classNames('k-icon', props.dataItem.icon ? props.dataItem.icon.iconClass : '')} />
+      <SvgIcon icon={svgIcon} />
       {name}
     </td>
   );

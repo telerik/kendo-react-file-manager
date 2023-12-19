@@ -9,10 +9,11 @@ import {
 import { Switch, Input, InputChangeEvent, SwitchChangeEvent } from "@progress/kendo-react-inputs";
 import { Dialog, DialogActionsBar } from '@progress/kendo-react-dialogs';
 import { Upload } from '@progress/kendo-react-upload';
-import { BaseEvent } from '@progress/kendo-react-common';
+import { BaseEvent, SvgIcon  } from '@progress/kendo-react-common';
 import { toggleViewBtnGroup, toggleSortBtnGroup } from '../helpers/helperMethods';
 import { GridViewBtnGroup, UploadAddEvent } from '../interfaces/FileManagerModels';
 import { Label } from "@progress/kendo-react-labels";
+import { sortAscSmallIcon, sortDescSmallIcon, gridIcon, gridLayoutIcon, searchIcon} from "@progress/kendo-svg-icons";
 
 export const FileManagerToolbar = (props) => {
   const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
@@ -130,13 +131,13 @@ export const FileManagerToolbar = (props) => {
       <ButtonGroup>
         <Button
           togglable={true}
-          icon="k-icon k-i-sort-asc-sm"
+          svgIcon={sortAscSmallIcon} 
           selected={props.sort[0].dir === 'asc'}
           onClick={handleAscBtnClick}
         />
         <Button
           togglable={true}
-          icon="k-icon k-i-sort-desc-sm"
+          svgIcon={sortDescSmallIcon}
           selected={props.sort[0].dir === 'desc'}
           onClick={handleDescSortBtnClick}
         />
@@ -150,13 +151,13 @@ export const FileManagerToolbar = (props) => {
       <ButtonGroup>
         <Button
           togglable={true}
-          icon="k-icon k-i-grid-layout"
+          svgIcon={gridLayoutIcon}
           selected={viewBtnGroup.gridView}
           onClick={handleGridViewChange}
         />
         <Button
           togglable={true}
-          icon="k-icon k-i-grid"
+          svgIcon={gridIcon}
           selected={viewBtnGroup.listView}
           onClick={handleListViewChange}
         />
@@ -168,9 +169,7 @@ export const FileManagerToolbar = (props) => {
       </div>
       <div className="k-filemanager-search-tool k-textbox k-toolbar-last-visible" >
         <Input className="k-input" placeholder="Search" onChange={handleSearchChange} />
-        <span className="k-input-icon">
-          <span className="k-icon k-i-search"></span>
-        </span>
+        <SvgIcon icon={searchIcon} className="k-input-icon"/>
       </div>
     </Toolbar>
   );

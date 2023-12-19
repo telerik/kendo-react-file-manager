@@ -1,5 +1,16 @@
 import { UploadFileInfo } from '@progress/kendo-react-upload';
 import { BreadcrumbDataModel, DataModel, GridViewBtnGroup, SortingBtnGroup } from '../interfaces/FileManagerModels';
+import {
+  filePdfIcon,
+  filePptIcon,
+  fileDataIcon,
+  fileImageIcon,
+  fileTxtIcon,
+  fileAudioIcon,
+  folderIcon,
+  fileIcon
+} from '@progress/kendo-svg-icons';
+
 
 export const convertExtensionToIcon = (item: string | null | undefined) => {
   if (!item) { return null; }
@@ -8,42 +19,42 @@ export const convertExtensionToIcon = (item: string | null | undefined) => {
   switch (extension ? extension.toLowerCase() : null) {
     case 'pdf':
       return {
-        iconClass: 'k-i-file-pdf k-i-pdf',
+        svgIcon: filePdfIcon,
         type: 'Data'
       };
     case 'ppt': case 'pptx':
       return {
-        iconClass: 'k-i-file-ppt k-i-ppt',
+        svgIcon: filePptIcon,
         type: 'Data'
       };
     case 'xlsx': case 'xls':
       return {
-        iconClass: 'k-i-file-data',
+        svgIcon: fileDataIcon,
         type: 'Data'
       };
     case 'jpg': case 'png':
       return {
-        iconClass: 'k-i-file-image',
+        svgIcon: fileImageIcon,
         type: 'Image'
       };
     case 'txt': case 'doc': case 'docx':
       return {
-        iconClass: 'k-i-file-txt',
+        svgIcon: fileTxtIcon,
         type: 'Text'
       };
     case 'mp3': case 'mp4': case 'mp':
       return {
-        iconClass: 'k-i-audio',
+        svgIcon: fileAudioIcon,
         type: 'Text'
       };
     case null:
       return {
-        iconClass: 'k-i-folder',
+        svgIcon: folderIcon,
         type: 'Folder'
       };
     default:
       return {
-        iconClass: 'k-i-file k-i-file-vertical',
+        svgIcon: fileIcon,
         type: 'Folder'
       };
   };
@@ -287,7 +298,6 @@ export const convertToBreadcrumbData = (selectedItem: DataModel | null) => {
     return [{
       id: 'Home',
       name: 'Home',
-      iconClass: 'k-i-home'
     }];
   }
 
@@ -302,12 +312,11 @@ export const convertToBreadcrumbData = (selectedItem: DataModel | null) => {
         path.push({
           id: 'Home',
           name: items[i],
-          iconClass: 'k-i-home'
         });
       } else {
         path.push({
           id: curItemPath.join('/'),
-          name: items[i]
+          name: items[i],
         });
       }
     }
